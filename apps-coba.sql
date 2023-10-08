@@ -69,3 +69,42 @@ COMMIT;
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
+
+
+CREATE TABLE `barang` (
+	`barang_id` INT(11) NOT NULL AUTO_INCREMENT,
+	`kode` VARCHAR(50) NULL DEFAULT NULL COLLATE 'latin1_swedish_ci',
+	`nama` VARCHAR(50) NULL DEFAULT NULL COLLATE 'latin1_swedish_ci',
+	`satuan` VARCHAR(50) NULL DEFAULT NULL COLLATE 'latin1_swedish_ci',
+	`harga` BIGINT(20) NULL DEFAULT NULL,
+	PRIMARY KEY (`barang_id`) USING BTREE
+)
+COLLATE='latin1_swedish_ci'
+ENGINE=InnoDB
+AUTO_INCREMENT=7
+;
+
+INSERT INTO `barang` (`barang_id`, `kode`, `nama`, `satuan`, `harga`) VALUES (1, 'SIDT', 'Sirtu', 'Dump Truck', 350000);
+INSERT INTO `barang` (`barang_id`, `kode`, `nama`, `satuan`, `harga`) VALUES (2, 'SIBK', 'Sirtu', 'Bak Kayu', 400000);
+INSERT INTO `barang` (`barang_id`, `kode`, `nama`, `satuan`, `harga`) VALUES (3, 'PADT', 'Pasir', 'Dump Truck', 1100000);
+INSERT INTO `barang` (`barang_id`, `kode`, `nama`, `satuan`, `harga`) VALUES (4, 'PABK', 'Pasir', 'Bak Kayu', 1150000);
+INSERT INTO `barang` (`barang_id`, `kode`, `nama`, `satuan`, `harga`) VALUES (5, 'SUDT', 'Sumbangan', 'Dump Truck', 0);
+INSERT INTO `barang` (`barang_id`, `kode`, `nama`, `satuan`, `harga`) VALUES (6, 'SUBK', 'Sumbangan', 'Bak Kayu', 0);
+
+
+CREATE TABLE `transaksi` (
+	`transaksi_id` INT(11) NOT NULL AUTO_INCREMENT,
+	`konsumen_id` INT(11) NULL DEFAULT NULL,
+	`barang_id` VARCHAR(50) NULL DEFAULT NULL COLLATE 'latin1_swedish_ci',
+	`jumlah` VARCHAR(50) NULL DEFAULT NULL COLLATE 'latin1_swedish_ci',
+	`total_harga` BIGINT(20) NULL DEFAULT NULL,
+	`tanggal` DATETIME NULL DEFAULT NULL,
+	`nota` VARCHAR(50) NULL DEFAULT NULL COLLATE 'latin1_swedish_ci',
+	PRIMARY KEY (`transaksi_id`) USING BTREE
+)
+COLLATE='latin1_swedish_ci'
+ENGINE=InnoDB
+AUTO_INCREMENT=2
+;
+
+INSERT INTO `transaksi` (`transaksi_id`, `konsumen_id`, `barang_id`, `jumlah`, `total_harga`, `tanggal`, `nota`) VALUES (1, 1, '1,2', '1,1', 750000, '2023-10-07 12:54:56', 'A1A1');
