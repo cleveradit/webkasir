@@ -32,12 +32,26 @@
 <script src="<?= base_url('assets/template') ?>/dist/js/adminlte.min.js"></script>
 <!-- AdminLTE for demo purposes -->
 <script src="<?= base_url('assets/template') ?>/dist/js/demo.js"></script>
+<!-- Select2 -->
+<script src="<?php echo base_url('assets/template/plugins/select2/js/select2.min.js') ?>"></script>
 <!-- page script -->
+<script>
+  var base_url = '<?php echo base_url() ?>'
+</script>
+<?php
+if (isset($script)) {
+  echo "<script src='" . $script . "'></script>";
+}
+?>
+
 <script>
   $(function () {
     $("#example1").DataTable({
       "responsive": true,
       "autoWidth": false,
+      "paging": false,
+      "searching": false,
+      "ordering": false
     });
     $('#example2').DataTable({
       "paging": true,
