@@ -1,3 +1,9 @@
+<!-- <style>
+    .select2-container .select2-selection--single {
+        height: calc(2.25rem + 2px);
+    }
+</style> -->
+
 <div class="card">
     <div class="card-header">
         <div class="row">
@@ -62,8 +68,8 @@
                         <input type="text" class="form-control" name="tanggal" id="tanggal" required>
                     </div>
                     <div class="form-group">
-                        <label>Pelanggan</label>
-                        <select name="pelannggan" id="pelanggan" class="form-control select2"></select>
+                        <label>Konsumen</label>
+                        <select name="konsumen" id="konsumen" class="form-control select2"></select>
                     </div>
                     <div class="form-group">
                         <label>Jumlah Uang</label>

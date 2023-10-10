@@ -98,6 +98,7 @@ CREATE TABLE `transaksi` (
 	`barang_id` VARCHAR(50) NULL DEFAULT NULL COLLATE 'latin1_swedish_ci',
 	`jumlah` VARCHAR(50) NULL DEFAULT NULL COLLATE 'latin1_swedish_ci',
 	`total_harga` BIGINT(20) NULL DEFAULT NULL,
+	`total_bayar` BIGINT(20) NULL DEFAULT NULL,
 	`tanggal` DATETIME NULL DEFAULT NULL,
 	`nota` VARCHAR(50) NULL DEFAULT NULL COLLATE 'latin1_swedish_ci',
 	PRIMARY KEY (`transaksi_id`) USING BTREE
@@ -107,4 +108,4 @@ ENGINE=InnoDB
 AUTO_INCREMENT=2
 ;
 
-INSERT INTO `transaksi` (`transaksi_id`, `konsumen_id`, `barang_id`, `jumlah`, `total_harga`, `tanggal`, `nota`) VALUES (1, 1, '1,2', '1,1', 750000, '2023-10-07 12:54:56', 'A1A1');
+INSERT INTO `transaksi` (`transaksi_id`, `konsumen_id`, `barang_id`, `jumlah`, `total_harga`, `total_bayar`, `tanggal`, `nota`) VALUES (1, 1, '1,2', '1,1', 750000, 1000000, '2023-10-07 12:54:56', 'A1A1');

@@ -34,6 +34,14 @@
 <script src="<?= base_url('assets/template') ?>/dist/js/demo.js"></script>
 <!-- Select2 -->
 <script src="<?php echo base_url('assets/template/plugins/select2/js/select2.min.js') ?>"></script>
+<!-- Datepicker -->
+<script src="<?php echo base_url('assets/template/plugins/bootstrap-datetimepicker/js/bootstrap-datetimepicker.min.js') ?>"></script>
+<!-- Moment -->
+<script src="<?php echo base_url('assets/template/plugins/moment/moment.min.js') ?>"></script>
+<!-- Validation -->
+<script src="<?php echo base_url('assets/template/plugins/jquery-validation/jquery.validate.min.js') ?>"></script>
+<!-- sweetalert -->
+<script src="<?php echo base_url('assets/template/plugins/sweetalert2/sweetalert2.min.js') ?>"></script>
 <!-- page script -->
 <script>
   var base_url = '<?php echo base_url() ?>'
