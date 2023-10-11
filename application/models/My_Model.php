@@ -120,6 +120,18 @@ class My_Model extends CI_Model
 		return $result;
 	}
 
+	function get_data_order($table, $where = null, $order = null)
+	{
+		if ($where) {
+			$this->db->where($where);
+		}
+		if ($order) {
+			$this->db->order_by($order);
+		}
+		$result 	=	$this->db->get($table);
+		return $result;
+	}
+
 	function save_data($nama_table, $data)
 	{
 		$this->db->insert($nama_table, $data);

@@ -130,7 +130,9 @@ $(".modal").on("show.bs.modal", () => {
     let now = moment().format("D-MM-Y H:mm:ss"),
         total = $("#total").html(),
         jumlah_uang = $('[name="jumlah_uang"').val();
-    $("#tanggal").val(now), $(".total_bayar").html(total), $(".kembalian").html(Math.max(jumlah_uang - total, 0))
+    $("#tanggal").val(now), 
+    $(".total_bayar").html(total), 
+    $(".kembalian").html(Math.max(jumlah_uang - total, 0))
 });
 
 $("#konsumen").select2({

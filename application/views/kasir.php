@@ -1,8 +1,17 @@
-<!-- <style>
+<style>
+    @media(max-width: 576px){
+        .nota{
+            justify-content: center !important;
+            text-align: center !important;
+        }
+    }
     .select2-container .select2-selection--single {
         height: calc(2.25rem + 2px);
     }
-</style> -->
+    .select2-container--default .select2-selection--single .select2-selection__arrow {
+        height: 36px;
+    }
+</style>
 
 <div class="card">
     <div class="card-header">
@@ -37,7 +46,7 @@
         </div>
     </div>
     <div class="card-body">
-        <table class="table w-100 table-bordered table-hover" id="transaksi">
+        <table class="table w-100 table-hover" id="transaksi">
             <thead>
                 <tr>
                     <th>Kode</th>
