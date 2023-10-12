@@ -16,14 +16,14 @@
                 <th>Total Bayar</th>
             </tr>
             <?php $no = 1;
-            foreach($riwayatpenjualan as $rp) : ?>
+            foreach($penjualan as $rp) : ?>
             <tr>
                 <td><?= $no++ ?></td>
-                <td><?= $rp->tanggal ?></td>
-                <td><?= $rp->nama_konsumen ?></td>
-                <td><?= $rp->barang ?></td>
-                <td><?= $rp->total_harga ?></td>
-                <td><?= $rp->total_bayar ?></td>
+                <td><?= $rp['tanggal'] ?></td>
+                <td><?= $rp['nama_konsumen'] ?></td>
+                <td><?= $rp['barang'] ?></td>
+                <td><?= $rp['total_harga'] ?></td>
+                <td><?= $rp['total_bayar'] ?></td>
             </tr>
             <?php endforeach ?>
         </table>

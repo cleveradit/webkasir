@@ -2,7 +2,8 @@
 <div class="card">
 		<div class="card-header">
 			<a href="<?= base_url('riwayatpenjualan/print') ?>" class="btn btn-info btn-sm"><i class="fas fa-print"></i> Print</a>
-</div>
+			<a href="<?= base_url('riwayatpenjualan/export_excel') ?>" class="btn btn-info btn-sm"><i class="fas fa-file-excel"></i> Excel</a>
+		</div>
     	<div class="card-body">
     	  <table id="penjualan" class="table table-hover">
         	<thead>
