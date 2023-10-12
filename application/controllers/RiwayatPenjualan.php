@@ -9,6 +9,13 @@ class RiwayatPenjualan extends CI_Controller {
 		$this->load->model('My_Model');
 	}
 
+	public function print()
+	{
+		$data['riwayatpenjualan'] = $this->My_Model->get_data_simple('transaksi')->result();
+		
+		$this->load->view('print_riwayatpenjualan', $data);
+	}
+
 	public function index()
 	{
 		$data['title'] = 'Riwayat Penjualan';
