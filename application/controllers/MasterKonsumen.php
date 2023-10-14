@@ -20,6 +20,54 @@ class MasterKonsumen extends CI_Controller {
 		$this->load->view('templates/footer');
 	}
 
+	public function excel()
+	{
+		$data['masterkonsumen'] = $this->MasterKonsumen_model->get_data('konsumen')->result();
+		
+		require(APPPATH. 'PHPExcel-1.8/Classes/PHPExcel.php');
+		require(APPPATH. 'PHPExcel-1.8/Classes/PHPExcel/Writer/Excel2007.php');
+
+		$object = new PHPExcel();
+
+		$object->getProperties()->setTitle("Daftar Konsumen");
+
+		$object->setActiveSheetIndex(0);
+
+		$object->getActiveSheet()->setCellValue('A1', 'NO');
+		$object->getActiveSheet()->setCellValue('B1', 'NAMA');
+		$object->getActiveSheet()->setCellValue('C1', 'NOPOL');
+		$object->getActiveSheet()->setCellValue('D1', 'SALDO');
+		$object->getActiveSheet()->setCellValue('E1', 'TANGGAL');
+
+		$baris = 2;
+		$no = 1;
+
+		foreach ($data['masterkonsumen'] as $mk)
+		{
+			$object->getActiveSheet()->setCellValue('A'.$baris, $no++);
+			$object->getActiveSheet()->setCellValue('B'.$baris, $mk->nama_konsumen);
+			$object->getActiveSheet()->setCellValue('C'.$baris, $mk->nopol);
+			$object->getActiveSheet()->setCellValue('D'.$baris, $mk->saldo);
+			$object->getActiveSheet()->setCellValue('E'.$baris, $mk->created_at);
+
+			$baris++;
+		}
+
+		$filename="Data_Konsumen".'xlxs';
+
+		$object->getActiveSheet()->setTitle("Data Konsumen");
+		
+		header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+		header('Content-Disposition: attachment;filename="'.filename.'"');
+		header('Cache-Control: max-age=0');
+
+		$writer=PHPExcel_IOFactory::createwriter($object, 'Excel2007');
+		writer->save('php://output');
+
+		exit;
+
+	}
+
 	public function tambah()
 	{
 		$data['title'] = 'Konsumen';

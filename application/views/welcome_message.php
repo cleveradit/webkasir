@@ -97,4 +97,5 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 </div>
 
 </body>
+<a href="<?php echo site_url('login/logout')?>">Keluar</a>
 </html>
