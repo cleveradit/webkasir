@@ -11,6 +11,12 @@ class Login extends CI_Controller {
 
 	public function index()
 	{
+        $username = $this->session->userdata('username');
+        
+        if (($username)) {
+            
+            redirect('kasir');
+        }
 		$this->load->view('login_view');
 	}
 

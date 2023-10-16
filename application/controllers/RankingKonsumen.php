@@ -7,6 +7,9 @@ class RankingKonsumen extends CI_Controller {
 	{
 		$data['title'] = 'Ranking Konsumen';
 
+		$this->load->model('Model_Login');
+		$this->Model_Login->keamanan();
+
 		$this->load->view('templates/header', $data);
 		$this->load->view('templates/sidebar', $data);
 		$this->load->view('rankingkonsumen');

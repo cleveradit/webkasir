@@ -12,6 +12,8 @@ class MasterKonsumen extends CI_Controller {
 	public function index()
 	{
 		$data['title'] = 'Konsumen';
+		$this->load->model('Model_Login');
+		$this->Model_Login->keamanan();
 		$data['masterkonsumen'] = $this->MasterKonsumen_model->get_data('konsumen')->result();
 
 		$this->load->view('templates/header', $data);

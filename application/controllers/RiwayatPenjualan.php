@@ -77,7 +77,8 @@ class RiwayatPenjualan extends CI_Controller {
 	{
 		$data['title'] = 'Riwayat Penjualan';
 
-		// $data['masterkonsumen'] = $this->MasterKonsumen_model->get_data('konsumen')->result();
+		$this->load->model('Model_Login');
+		$this->Model_Login->keamanan();
 
 		if ($this->My_Model->get_data_simple('transaksi')->num_rows() > 0) {
 			$transaksi = $this->My_Model->get_data_order('transaksi',null,'tanggal desc')->result();

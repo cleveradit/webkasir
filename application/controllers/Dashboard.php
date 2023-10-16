@@ -7,10 +7,15 @@ class Dashboard extends CI_Controller {
 	{
 		$data['title'] = 'Dashboard';
 
+		$this->load->model('Model_Login');
+		$this->Model_Login->keamanan();
+
 		$this->load->view('templates/header', $data);
 		$this->load->view('templates/sidebar', $data);
 		$this->load->view('dashboard');
 		$this->load->view('templates/footer');	
+
+
 	}
 
 }

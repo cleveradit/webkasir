@@ -17,6 +17,9 @@ class Kasir extends CI_Controller {
 		$data['title'] = 'Kasir';
 		$data['script'] = base_url('assets/js/kasir.js');
 
+		$this->load->model('Model_Login');
+		$this->Model_Login->keamanan();
+
 		$this->load->view('templates/header', $data);
 		$this->load->view('templates/sidebar', $data);
 		$this->load->view('kasir');
