@@ -14,6 +14,7 @@
   <!-- DataTables -->
   <link rel="stylesheet" href="<?= base_url('assets/template') ?>/plugins/datatables-bs4/css/dataTables.bootstrap4.min.css">
   <link rel="stylesheet" href="<?= base_url('assets/template') ?>/plugins/datatables-responsive/css/responsive.bootstrap4.min.css">
+  <link rel="stylesheet" href="<?= base_url('assets/template') ?>/plugins/datatables-buttons/css/buttons.bootstrap4.min.css">
   <!-- Theme style -->
   <link rel="stylesheet" href="<?= base_url('assets/template') ?>/dist/css/adminlte.min.css">
   <!-- Google Font: Source Sans Pro -->
@@ -25,4 +26,12 @@
   <!-- Sweetalert2 -->
   <link rel="stylesheet" href="<?php echo base_url('assets/template/plugins/sweetalert2/sweetalert2.min.css') ?>">
   <link rel="stylesheet" href="<?php echo base_url('assets/template/plugins/sweetalert2-theme-bootstrap-4/bootstrap-4.min.css') ?>">
+  <style>
+    .bg-purple {
+      background: linear-gradient(180deg,#6f42c1,#001F3F)!important;
+    }
+    .custom-dataTables-button{
+      background: linear-gradient(0deg,#6f42c1,#001F3F);
+    }
+  </style>
 </head>

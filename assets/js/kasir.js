@@ -151,6 +151,10 @@ $("#konsumen").select2({
     }
 });
 
+$("#konsumen").change(function(){
+    checkUang();
+})
+
 function kembalian() {
     let total = $("#total").html(),
         jumlah_uang = $('[name="jumlah_uang"').val(),
@@ -161,8 +165,9 @@ function kembalian() {
 
 function checkUang() {
     let jumlah_uang = $('[name="jumlah_uang"').val(),
-        total_bayar = parseInt($(".total_bayar").html());
-    if (jumlah_uang !== "" && jumlah_uang >= total_bayar) {
+        total_bayar = parseInt($(".total_bayar").html()),
+        konsumen = $('[name="konsumen"').val();
+    if (jumlah_uang !== "" && jumlah_uang >= total_bayar && konsumen !== null) {
         $("#add").removeAttr("disabled");
         $("#cetak").removeAttr("disabled")
     } else {
