@@ -76,6 +76,51 @@ class Kasir extends CI_Controller {
         echo json_encode($data);
 	}
 
+	public function get_bonus(){
+		$konsumen_id = $this->input->post('konsumen');
+		// Total pembelian sirtu 3 hari terakhir
+		$sirtu_id = [1,2];
+		$query_transaksi_sirtu = "SELECT * FROM transaksi WHERE tanggal >= DATE_SUB(NOW(), INTERVAL 3 DAY) AND konsumen_id = $konsumen_id AND (barang_id LIKE '%$sirtu_id[0]%' OR barang_id LIKE '%$sirtu_id[1]%')";
+		$transaksi_sirtu = $this->My_Model->get_query($query_transaksi_sirtu)->result_array();
+		$data['total_sirtu'] = 0;
+		foreach($transaksi_sirtu as $ts){
+			$barang_id = explode(',', $ts['barang_id']);
+			$jumlah = explode(',', $ts['jumlah']);
+			foreach ($barang_id as $key => $barang){
+				if($barang == $sirtu_id[0] || $barang == $sirtu_id[1]){
+					$data['total_sirtu'] += $jumlah[$key];
+				}
+			}
+		}
+		// Total pembelian pasir 3 hari terakhir
+		$pasir_id = [3,4];
+		$query_transaksi_pasir = "SELECT * FROM transaksi WHERE tanggal >= DATE_SUB(NOW(), INTERVAL 3 DAY) AND konsumen_id = $konsumen_id AND (barang_id LIKE '%$pasir_id[0]%' OR barang_id LIKE '%$pasir_id[1]%')";
+		$transaksi_pasir = $this->My_Model->get_query($query_transaksi_pasir)->result_array();
+		$data['total_pasir'] = 0;
+		foreach($transaksi_pasir as $tp){
+			$barang_id = explode(',', $tp['barang_id']);
+			$jumlah = explode(',', $tp['jumlah']);
+			foreach ($barang_id as $key => $barang){
+				if($barang == $pasir_id[0] || $barang == $pasir_id[1]){
+					$data['total_pasir'] += $jumlah[$key];
+				}
+			}
+		}
+		// Total pembelian sirtu / pasir dengan keranjang
+		$barang_keranjang = json_decode($this->input->post('nama'));
+		$jumlah_keranjang = json_decode($this->input->post('qty'));
+		foreach ($barang_keranjang as $key => $bka){
+			// echo $bka;
+			// die();
+			if($bka == "Sirtu"){
+				$data['total_sirtu'] += $jumlah_keranjang[$key];
+			}if($bka == "Pasir"){
+				$data['total_pasir'] += $jumlah_keranjang[$key];
+			}
+		}
+		echo json_encode($data);
+	}
+
 	public function checkout()
 	{
 		$barang = json_decode($this->input->post('barang'));
@@ -92,6 +137,7 @@ class Kasir extends CI_Controller {
         	'total_bayar' => $this->input->post('total_bayar'),
 			'konsumen_id' => $this->input->post('konsumen'),
 			'nota' => $this->input->post('nota'),
+			'bonus' => $this->input->post('bonus'),
 		);
 		if ($this->My_Model->save_data('transaksi',$data)) {
 			echo json_encode($this->db->insert_id());
@@ -118,6 +164,7 @@ class Kasir extends CI_Controller {
 			$value->harga = $value->harga * $qty[$key];
 		}
 		$data = array(
+			'bonus' => $transaksi->bonus,
 			'nota' => $transaksi->nota,
 			'tanggal' => $transaksi->tanggal,
 			'barang' => $dataBarang,

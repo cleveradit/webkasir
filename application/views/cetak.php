@@ -3,9 +3,15 @@
 <head>
 	<meta charset="UTF-8">
 	<title>Cetak</title>
+	<style>
+		@page {
+			size: 80mm auto; /* Atur ukuran kertas cetak */
+			margin: 0; /* Atur margin (opsional) */
+    	}
+	</style>
 </head>
 <body>
-	<div style="width: 500px; margin: auto;">
+	<div style="width: 302px; margin: auto;">
 		<br>
 		<center>
 			Toko Material Tambang<br>
@@ -72,6 +78,9 @@
 				</tr>
 			</table>
 			<br>
+			Target reward : <?= $bonus ?>
+			<br>
+			<br>
 			Terima Kasih <br>
 			Toko Material Tambang
 		</center>
@@ -80,16 +89,24 @@
     var base_url = '<?php echo base_url() ?>'
     </script>
 	<script>
-		window.print();
-        // Menambahkan event listener untuk event afterprint
-        if (window.matchMedia) {
-            const mediaQueryList = window.matchMedia('print');
-            mediaQueryList.addEventListener('change', (e) => {
-                if (!e.matches) {
-                    window.location.href = base_url+"/kasir";
-                }
-            });
-        }
+		// Loop untuk mencetak 3 halaman
+		for (let i = 0; i < 3; i++) {
+			if (i > 0) {
+				// Tambahkan halaman baru setelah cetakan pertama
+				document.write('<page></page>');
+			}
+			window.print();
+		}
+		
+		// Menambahkan event listener untuk event afterprint
+		if (window.matchMedia) {
+			const mediaQueryList = window.matchMedia('print');
+			mediaQueryList.addEventListener('change', (e) => {
+				if (!e.matches) {
+					window.location.href = base_url+"/kasir";
+				}
+			});
+		}
 	</script>
 </body>
 </html>

@@ -86,9 +86,9 @@
                             onkeyup="kembalian()" required>
                     </div>
                     <div class="form-group">
-                        <label>Diskon</label>
-                        <input placeholder="Diskon" type="number" class="form-control" onkeyup="kembalian()"
-                            name="diskon">
+                        <label>Bonus</label>
+                        <input placeholder="Bonus" type="text" class="form-control" onkeyup="kembalian()"
+                            name="bonus" id="bonus" readonly>
                     </div>
                     <div class="form-group">
                         <b>Total Bayar:</b> <span class="total_bayar"></span>

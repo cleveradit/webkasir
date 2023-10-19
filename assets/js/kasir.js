@@ -129,7 +129,7 @@ $("#tanggal").datetimepicker({
 $(".modal").on("show.bs.modal", () => {
     let now = moment().format("D-MM-Y H:mm:ss"),
         total = $("#total").html(),
-        jumlah_uang = $('[name="jumlah_uang"').val();
+        jumlah_uang = $('[name="jumlah_uang"]').val();
     $("#tanggal").val(now), 
     $(".total_bayar").html(total), 
     $(".kembalian").html(Math.max(jumlah_uang - total, 0))
@@ -153,6 +153,29 @@ $("#konsumen").select2({
 
 $("#konsumen").change(function(){
     checkUang();
+    let data = transaksi.rows().data(),
+        nama = [],
+        qty = [],
+        konsumen = $("#konsumen").val();
+    $.each(data, (index, value) => {
+        nama.push(value[1])
+        qty.push(value[4])
+    });
+    $.ajax({
+        url: base_url + "kasir/get_bonus",
+        type: "post",
+        dataType: "json",
+        data: {
+            nama: JSON.stringify(nama),
+            qty: JSON.stringify(qty),
+            konsumen: konsumen
+        },
+        success: function(res) {
+            console.log(res)
+            $('#bonus').val('Sirtu: '+res.total_sirtu+'/3, Pasir: '+res.total_pasir+'/3')
+            // Lakukan sesuatu dengan res di sini
+        }
+    });
 })
 
 function kembalian() {
@@ -207,14 +230,15 @@ function checkout() {
         data: {
             barang: JSON.stringify(barang),
             tanggal: $("#tanggal").val(),
-            qty: JSON.stringify(qty), // Convert qty to JSON
+            qty: JSON.stringify(qty),
             total_harga: $("#total").html(),
             total_bayar: $('[name="jumlah_uang"]').val(),
-            diskon: $('[name="diskon"]').val(),
+            bonus: $('[name="bonus"]').val(),
             konsumen: $("#konsumen").val(),
             nota: $("#nota").html()
         },
         success: res => {
+            console.log(res)
             if (isCetak) {
                 Swal.fire("Sukses", "Sukses Membayar", "success").
                     then(() => window.location.href = `${base_url+"kasir/cetak/"}${res}`)
