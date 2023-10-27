@@ -7,11 +7,13 @@ class MasterKonsumen extends CI_Controller {
 	{
 		parent::__construct();
 		$this->load->model('MasterKonsumen_model');
+		$this->load->model('My_Model');
 	}
 
 	public function index()
 	{
 		$data['title'] = 'Konsumen';
+		$data['script'] = base_url('assets/js/master_konsumen.js');
 		$this->load->model('Model_Login');
 		$this->Model_Login->keamanan();
 		$data['masterkonsumen'] = $this->MasterKonsumen_model->get_data('konsumen')->result();
@@ -20,6 +22,24 @@ class MasterKonsumen extends CI_Controller {
 		$this->load->view('templates/sidebar', $data);
 		$this->load->view('masterkonsumen', $data);
 		$this->load->view('templates/footer');
+	}
+
+	public function load_data(){
+		if ($this->MasterKonsumen_model->get_data('transaksi')->num_rows() > 0) {
+			$no = 1;
+			$masterkonsumen = $this->MasterKonsumen_model->get_data('konsumen')->result_array();
+			foreach ($masterkonsumen as $konsumen){
+				$konsumen_response[] = [
+					'no' => $no++,
+					'id_konsumen' => $konsumen['id_konsumen'],
+					'nama_konsumen' => $konsumen['nama_konsumen'],
+					'nopol' => $konsumen['nopol'],
+					'created_at' => $konsumen['created_at'],
+				];
+			}
+			header('Content-Type: application/json');
+			echo json_encode(['data' => $konsumen_response]);
+		}
 	}
 
 	public function excel()
@@ -38,8 +58,7 @@ class MasterKonsumen extends CI_Controller {
 		$object->getActiveSheet()->setCellValue('A1', 'NO');
 		$object->getActiveSheet()->setCellValue('B1', 'NAMA');
 		$object->getActiveSheet()->setCellValue('C1', 'NOPOL');
-		$object->getActiveSheet()->setCellValue('D1', 'SALDO');
-		$object->getActiveSheet()->setCellValue('E1', 'TANGGAL');
+		$object->getActiveSheet()->setCellValue('D1', 'TANGGAL');
 
 		$baris = 2;
 		$no = 1;
@@ -49,8 +68,7 @@ class MasterKonsumen extends CI_Controller {
 			$object->getActiveSheet()->setCellValue('A'.$baris, $no++);
 			$object->getActiveSheet()->setCellValue('B'.$baris, $mk->nama_konsumen);
 			$object->getActiveSheet()->setCellValue('C'.$baris, $mk->nopol);
-			$object->getActiveSheet()->setCellValue('D'.$baris, $mk->saldo);
-			$object->getActiveSheet()->setCellValue('E'.$baris, $mk->created_at);
+			$object->getActiveSheet()->setCellValue('D'.$baris, $mk->created_at);
 
 			$baris++;
 		}
@@ -60,11 +78,11 @@ class MasterKonsumen extends CI_Controller {
 		$object->getActiveSheet()->setTitle("Data Konsumen");
 		
 		header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
-		header('Content-Disposition: attachment;filename="'.filename.'"');
+		header('Content-Disposition: attachment;filename="'.$filename.'"');
 		header('Cache-Control: max-age=0');
 
 		$writer=PHPExcel_IOFactory::createwriter($object, 'Excel2007');
-		writer->save('php://output');
+		$writer->save('php://output');
 
 		exit;
 
@@ -89,7 +107,6 @@ class MasterKonsumen extends CI_Controller {
 			$data = array(
 				'nama_konsumen' => $this->input->post('nama_konsumen'),
 				'nopol' => $this->input->post('nopol'),
-				'saldo' => $this->input->post('saldo'),
 			);
 
 			$this->MasterKonsumen_model->insert_data($data, 'konsumen');
@@ -109,7 +126,6 @@ class MasterKonsumen extends CI_Controller {
 				'id_konsumen' => $id_konsumen,
 				'nama_konsumen' => $this->input->post('nama_konsumen'),
 				'nopol' => $this->input->post('nopol'),
-				'saldo' => $this->input->post('saldo'),
 			);
 
 			$this->MasterKonsumen_model->update_data($data, 'konsumen');
@@ -127,18 +143,13 @@ class MasterKonsumen extends CI_Controller {
 		$this->form_validation->set_rules('nopol', 'Nama Konsumen', 'required', array(
 			'required'=> '%s Harus diisi!'
 		));
-		$this->form_validation->set_rules('saldo', 'Nama Konsumen', 'required', array(
-			'required'=> '%s Harus diisi!'
-		));
 	}
 
 	public function delete($id)
 	{
-		$where = array('id_konsumen', $id);
-
-		$this->MasterKonsumen_model->delete($where, 'konsumen');
-			$this->session->set_flashdata('pesan', '<div class="alert alert-danger alert-dismissible fade show" role="alert"> Data berhasil dihapus! <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button></div>');
-			redirect('masterkonsumen');
+		$this->MasterKonsumen_model->delete(['id_konsumen' => $id], 'konsumen');
+		$this->session->set_flashdata('pesan', '<div class="alert alert-danger alert-dismissible fade show" role="alert"> Data berhasil dihapus! <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button></div>');
+		redirect('masterkonsumen');
 	}
 }
 

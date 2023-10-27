@@ -2,37 +2,23 @@
 <div class="card">
 	<div class="card-header">
         <a href="<?= base_url('masterkonsumen/tambah') ?>" class="btn btn-primary btn-sm"><i class="fas fa-plus"></i> Tambah</a>
-		<a href="<?= base_url('masterkonsumen/excel') ?>" class="btn btn-success btn-sm"><i class="fas fa-file"></i> Export PDF</a>
+		<!-- <a href="<?= base_url('masterkonsumen/excel') ?>" class="btn btn-success btn-sm"><i class="fas fa-file"></i> Export PDF</a> -->
     </div>
     	<!-- /.card-header -->
     	<div class="card-body">
-    	  <table id="example1" class="table table-hover">
+    	  <table id="konsumen" class="table table-hover">
         	<thead>
         		<tr class="text-center">
         		  <th>No</th>
         		  <th>Nama</th>
         		  <th>Nopol</th>
-        		  <th>Saldo</th>
         		  <th>Created at</th>
         		  <th>Action</th>
         		</tr>
         	</thead>
-        	<?php $no = 1;
-        	foreach($masterkonsumen as $mk) : ?>
-        		<tbody>
-        			<tr class="text-center">
-        			  <td><?= $no++ ?></td>
-        			  <td><?= $mk->nama_konsumen ?></td>
-        			  <td><?= $mk->nopol ?></td>
-        			  <td><?= $mk->saldo ?></td>
-    	    		  <td><?= $mk->created_at ?></td>
-	        		  <td>
-	        		  	<button data-toggle="modal" data-target="#edit<?= $mk->id_konsumen ?>" class="btn btn-warning btn-sm"><i class="fas fa-edit"></i></button>
-	        		  	<a href="<?= base_url('masterkonsumen/delete/' . $mk->id_konsumen) ?>" class="btn btn-danger btn-sm" onclick="return confirm('Apakah anda yakin akan menghapus data ini?')"><i class="fas fa-trash"></i></a>
-	        		  </td>
-        			</tr>
-    		    </tbody>
-    	    <?php endforeach ?>
+			<tbody class="text-center">
+				
+			</tbody>
         </table>
     </div>
 </div>
@@ -60,15 +46,9 @@
 		<input type="text" name="nopol" class="form-control" value="<?= $mk->nopol ?>">
 		<?= form_error('nopol', '<div class="text-small text-danger">', '</div>'); ?>
 	</div>
-	<div class="form-group">
-		<label>Saldo</label>
-		<input type="text" name="saldo" class="form-control" value="<?= $mk->saldo ?>">
-		<?= form_error('saldo', '<div class="text-small text-danger">', '</div>'); ?>
-	</div>
-
     	<div class="modal-footer">
 			<button type="submit" class="btn btn-primary btn-sm"><i class="fas fa-save"></i> Simpan</button>
-			<button type="reset" class="btn btn-danger btn-sm"><i class="fas fa-trash"></i> Reset</button>
+			<!-- <button type="reset" class="btn btn-danger btn-sm"><i class="fas fa-trash"></i> Reset</button> -->
       		</div>
 </form>
       </div>

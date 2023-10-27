@@ -15,17 +15,23 @@
   <link rel="stylesheet" href="<?= base_url('assets/template') ?>/dist/css/adminlte.min.css">
   <!-- Google Font: Source Sans Pro -->
   <link href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700" rel="stylesheet">
+  <style>
+    .bg-purple {
+      background: linear-gradient(180deg,#6f42c1,#001F3F)!important;
+    }
+  </style>
 </head>
 
 <body class="hold-transition login-page">
 <div class="login-box">
   <div class="login-logo">
-    <a href="../../index2.html"><b>Admin</b>LTE</a>
-  </div>
+      <img src="<?= base_url('assets/img/logo.png') ?>" height="36rem" alt="Logo" class="brand-image elevation-3">
+      <span class="brand-text font-weight-light text-md">PT. Sumber Bukit Caringin </span>
+    </div>
   <!-- /.login-logo -->
-  <div class="card">
-    <div class="card-body login-card-body">
-      <p class="login-box-msg">Sign in to start your session</p>
+  <div class="card shadow-lg" style="border-radius: 20px;">
+    <div class="card-body login-card-body bg-purple" style="border-radius: 20px;">
+      <p class="login-box-msg">Silahkan masuk terlebih dahulu</p>
 
       <form action="<?php echo site_url('login/ceklogin')?>" method="post">
         <div class="input-group mb-3">
@@ -45,17 +51,17 @@
           </div>
         </div>
         <div class="row">
-          <div class="col-8">
-            <div class="icheck-primary">
+          <div class="col-4">
+            <!-- <div class="icheck-primary">
               <input type="checkbox" id="remember">
               <label for="remember">
                 Remember Me
               </label>
-            </div>
+            </div> -->
           </div>
           <!-- /.col -->
           <div class="col-4">
-            <button type="submit" class="btn btn-primary btn-block">Sign In</button>
+            <button type="submit" class="btn btn-sm btn-block btn-outline-light">Masuk</button>
           </div>
           <!-- /.col -->
         </div>

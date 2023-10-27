@@ -30,8 +30,8 @@
                     <input type="number" class="form-control col-sm-6" placeholder="Jumlah" id="jumlah">
                 </div>
                 <div class="form-group">
-                    <button id="tambah" class="btn btn-success" onclick="addKeranjang()">Tambah</button>
-                    <button id="bayar" class="btn btn-success" data-toggle="modal" data-target="#modal"
+                    <button id="tambah" class="btn btn-sm btn-success" onclick="addKeranjang()">Tambah</button>
+                    <button id="bayar" class="btn btn-sm btn-info" data-toggle="modal" data-target="#modal"
                         disabled>Bayar</button>
                 </div>
             </div>
@@ -54,6 +54,7 @@
                     <th>Satuan</th>
                     <th>Harga</th>
                     <th>Jumlah</th>
+                    <th>Id Barang</th>
                     <th>Actions</th>
                 </tr>
             </thead>
@@ -72,6 +73,8 @@
             </div>
             <div class="modal-body">
                 <form id="form">
+                    <input type="hidden" name="bonus_id" id="bonus_id">
+                    <input type="hidden" name="status" id="status">
                     <div class="form-group">
                         <label>Tanggal</label>
                         <input type="text" class="form-control" name="tanggal" id="tanggal" required>
@@ -87,7 +90,7 @@
                     </div>
                     <div class="form-group">
                         <label>Bonus</label>
-                        <input placeholder="Bonus" type="text" class="form-control" onkeyup="kembalian()"
+                        <input placeholder="Bonus" type="text" class="form-control"
                             name="bonus" id="bonus" readonly>
                     </div>
                     <div class="form-group">
@@ -96,11 +99,10 @@
                     <div class="form-group">
                         <b>Kembalian:</b> <span class="kembalian"></span>
                     </div>
-                    <button id="add" class="btn btn-success" type="submit" onclick="bayar()"
+                    <button id="add" class="btn btn-sm btn-success" type="submit" onclick="bayar()"
                         disabled>Bayar</button>
-                    <button id="cetak" class="btn btn-success" type="submit" onclick="bayarCetak()" disabled>Bayar
-                        Dan Cetak</button>
-                    <button class="btn btn-danger" data-dismiss="modal">Close</button>
+                    <button id="cetak" class="btn btn-sm btn-info" type="submit" onclick="bayarCetak()" disabled>Bayar Dan Cetak</button>
+                    <button class="btn btn-sm btn-danger" data-dismiss="modal">Close</button>
                 </form>
             </div>
         </div>
