@@ -71,6 +71,13 @@
                 </a>
               </li>
 
+          <li class="nav-item">
+                <a href="<?= base_url('pengeluaran') ?>" class="nav-link">
+                  <i class="nav-icon fas fa-money-bill"></i>
+                  <p>Pengeluaran</p>
+                </a>
+              </li>
+
         </ul>
       </nav>
       <!-- /.sidebar-menu -->
