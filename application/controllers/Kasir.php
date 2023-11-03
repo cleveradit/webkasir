@@ -114,8 +114,14 @@ class Kasir extends CI_Controller
 				$status_bonus = explode(',', $t['status_bonus']);
 				foreach ($barang_id as $key => $barang) {
 					foreach ($barang_bonus as $bb) {
-						if ($barang == $bb && $status_bonus[$key] != 1) {
-							$total += $jumlah[$key];
+						if(count($status_bonus)>1){
+							if ($barang == $bb && $status_bonus[$key] != 1) {
+								$total += $jumlah[$key];
+							}
+						}else{
+							if ($barang == $bb) {
+								$total += $jumlah[$key];
+							}
 						}
 					}
 				}
@@ -137,7 +143,7 @@ class Kasir extends CI_Controller
 			// Cek apakah total memenuhi syarat pembelian bonus
 			if ($total >= $b['jumlah']) {
 				// Cek apakah konsumen sudah mengambil apa belum
-				if ($konsumen['bonus'] != $b['bonus_id']) {
+				// if ($konsumen['bonus'] != $b['bonus_id']) {
 					$bonus_barang_array = explode(',', $b['barang']);
 					$barang_text = array();
 					foreach ($bonus_barang_array as $bba){
@@ -154,7 +160,7 @@ class Kasir extends CI_Controller
 						'hari' => $b['hari'],
 						'uang' => $b['uang']
 					];
-				}
+				// }
 			}
 		}
 		if(!isset($response)){

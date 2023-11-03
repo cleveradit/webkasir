@@ -5,6 +5,7 @@
 -- HeidiSQL Version:             12.1.0.6537
 -- --------------------------------------------------------
 
+<<<<<<< Updated upstream
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
 /*!40101 SET NAMES utf8 */;
 /*!50503 SET NAMES utf8mb4 */;
@@ -75,6 +76,31 @@ REPLACE INTO `konsumen` (`id_konsumen`, `nama_konsumen`, `nopol`, `bonus`, `crea
 
 -- Dumping structure for table apps-coba.login
 CREATE TABLE IF NOT EXISTS `login` (
+=======
+--
+-- Table structure for table `konsumen`
+--
+CREATE TABLE `konsumen` (
+  `id_konsumen` int(11) NOT NULL,
+  `nama_konsumen` varchar(35) NOT NULL,
+  `nopol` varchar(10) NOT NULL,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+INSERT INTO `konsumen` (`id_konsumen`, `nama_konsumen`, `nopol`, `created_at`) VALUES (3, 'gani', 'aa', '2023-10-20 20:37:27');
+INSERT INTO `konsumen` (`id_konsumen`, `nama_konsumen`, `nopol`, `created_at`) VALUES (4, 'putro', 'bb', '2023-10-21 16:17:23');
+INSERT INTO `konsumen` (`id_konsumen`, `nama_konsumen`, `nopol`, `created_at`) VALUES (5, 'yusuf', 'cc', '2023-10-20 20:37:32');
+INSERT INTO `konsumen` (`id_konsumen`, `nama_konsumen`, `nopol`, `created_at`) VALUES (6, 'radit', 'dd', '2023-10-20 20:37:33');
+
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `login`
+--
+
+CREATE TABLE `login` (
+>>>>>>> Stashed changes
   `username` varchar(15) NOT NULL,
   `password` varchar(15) NOT NULL,
   PRIMARY KEY (`username`)
@@ -93,6 +119,7 @@ CREATE TABLE IF NOT EXISTS `transaksi` (
   `total_harga` bigint(20) DEFAULT NULL,
   `total_bayar` bigint(20) DEFAULT NULL,
   `tanggal` datetime DEFAULT NULL,
+<<<<<<< Updated upstream
   `nota` varchar(50) CHARACTER SET latin1 COLLATE latin1_swedish_ci DEFAULT NULL,
   `bonus` varchar(50) DEFAULT NULL,
   `status_bonus` varchar(50) DEFAULT NULL,
@@ -116,5 +143,90 @@ REPLACE INTO `transaksi` (`transaksi_id`, `konsumen_id`, `barang_id`, `jumlah`, 
 /*!40103 SET TIME_ZONE=IFNULL(@OLD_TIME_ZONE, 'system') */;
 /*!40101 SET SQL_MODE=IFNULL(@OLD_SQL_MODE, '') */;
 /*!40014 SET FOREIGN_KEY_CHECKS=IFNULL(@OLD_FOREIGN_KEY_CHECKS, 1) */;
+=======
+  `nota` varchar(50) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+--
+-- Dumping data for table `transaksi`
+--
+
+INSERT INTO `transaksi` (`transaksi_id`, `konsumen_id`, `barang_id`, `jumlah`, `total_harga`, `total_bayar`, `tanggal`, `nota`) VALUES
+(1, 3, '1,2', '1,1', 750000, 1000000, '2023-10-07 12:54:56', 'A1A1'),
+(2, 4, '1,2', '1,1', 750000, 1000000, '2023-10-13 12:54:56', 'A1A1');
+
+--
+-- Indexes for dumped tables
+--
+
+--
+-- Indexes for table `barang`
+--
+ALTER TABLE `barang`
+  ADD PRIMARY KEY (`barang_id`) USING BTREE;
+
+--
+-- Indexes for table `konsumen`
+--
+ALTER TABLE `konsumen`
+  ADD PRIMARY KEY (`id_konsumen`);
+
+--
+-- Indexes for table `login`
+--
+ALTER TABLE `login`
+  ADD PRIMARY KEY (`username`);
+
+--
+-- Indexes for table `transaksi`
+--
+ALTER TABLE `transaksi`
+  ADD PRIMARY KEY (`transaksi_id`) USING BTREE;
+
+--
+-- AUTO_INCREMENT for dumped tables
+--
+
+--
+-- AUTO_INCREMENT for table `barang`
+--
+ALTER TABLE `barang`
+  MODIFY `barang_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
+
+--
+-- AUTO_INCREMENT for table `konsumen`
+--
+ALTER TABLE `konsumen`
+  MODIFY `id_konsumen` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
+
+--
+-- AUTO_INCREMENT for table `transaksi`
+--
+ALTER TABLE `transaksi`
+  MODIFY `transaksi_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+
+ALTER TABLE `transaksi`
+	ADD COLUMN `bonus` VARCHAR(50) NULL DEFAULT NULL AFTER `nota`;
+
+CREATE TABLE `bonus` (
+  `bonus_id` int(11) NOT NULL,
+  `barang` VARCHAR(50) NULL DEFAULT NULL,
+	`jumlah` INT(11) NULL DEFAULT NULL,
+	`hari` INT(11) NULL DEFAULT NULL,
+	`uang` BIGINT(20) NULL DEFAULT NULL,
+	`status` VARCHAR(50) NULL DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+ALTER TABLE `bonus`
+  ADD PRIMARY KEY (`bonus_id`);
+
+INSERT INTO `bonus` (`bonus_id`, `barang`, `jumlah`, `hari`, `uang`, `status`) VALUES (1, '3,4', 5, 4, 150000, 'aktif');
+INSERT INTO `bonus` (`bonus_id`, `barang`, `jumlah`, `hari`, `uang`, `status`) VALUES (2, '3,4', 10, 7, 350000, 'aktif');
+INSERT INTO `bonus` (`bonus_id`, `barang`, `jumlah`, `hari`, `uang`, `status`) VALUES (3, '3,4', 15, 7, 650000, 'aktif');
+INSERT INTO `bonus` (`bonus_id`, `barang`, `jumlah`, `hari`, `uang`, `status`) VALUES (4, '3,4', 30, 10, 1500000, 'aktif');
+
+ALTER TABLE `transaksi`
+	ADD COLUMN `status_bonus` VARCHAR(50) NULL DEFAULT NULL AFTER `bonus`;
+>>>>>>> Stashed changes
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40111 SET SQL_NOTES=IFNULL(@OLD_SQL_NOTES, 1) */;

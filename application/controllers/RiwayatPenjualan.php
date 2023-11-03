@@ -1,6 +1,10 @@
 <?php
 defined('BASEPATH') OR exit('No direct script access allowed');
 
+use PhpOffice\PhpSpreadsheet\IOFactory;
+use PhpOffice\PhpSpreadsheet\Spreadsheet;
+use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
+
 class RiwayatPenjualan extends CI_Controller {
 
 	public function __construct()
@@ -125,6 +129,93 @@ class RiwayatPenjualan extends CI_Controller {
     		echo json_encode(['data' => $data['penjualan']]);
 		}
 	}
+
+	public function download_excel(){
+		// Load the existing Excel file
+		$inputFileName = 'D:/Download/riwayat.xlsx';
+		$spreadsheet = IOFactory::load($inputFileName);
+	
+		// Fetch data
+		$date = date('Y-m-d');
+		$transaksi = $this->My_Model->get_data_order('transaksi', ['tanggal like' => $date.'%'], 'tanggal desc')->result();
+		$no = 1;
+		$total_pendapatan = 0;
+		$data = [];
+	
+		foreach ($transaksi as $transaksi) {
+			$konsumen = $this->My_Model->get_data_simple('konsumen', ['id_konsumen' => $transaksi->konsumen_id])->row();
+			$barang = explode(',', $transaksi->barang_id);
+			$jumlah = explode(',', $transaksi->jumlah);
+			$table_barang = [];
+			$total_pendapatan += $transaksi->total_harga;
+	
+			foreach ($barang as $key => $barang) {
+				$data_barang = $this->My_Model->get_data_simple('barang', ['barang_id' => $barang])->row();
+				$table_barang[] = $data_barang->nama . ' ' . $data_barang->satuan . ' (' . $jumlah[$key] . ')';
+			}
+	
+			$data[] = [
+				'no' => $no++,
+				'tanggal' => $transaksi->tanggal,
+				'konsumen' => $konsumen->nama_konsumen,
+				'harga' => $transaksi->total_harga,
+				'barang' => implode("\n", $table_barang), // Menggunakan "\n" sebagai pemisah untuk data barang
+			];
+		}
+
+		// Get the sheet you want to edit (e.g., sheet index 0)
+		$sheet = $spreadsheet->getSheet(0);
+
+		// Find the highest row number with data in the first column (A)
+		$highestRow = $sheet->getHighestRow();
+
+		$worksheet0 = $sheet;
+
+		// Update cell values in the existing sheet
+		$worksheet0->setCellValue('A' . $highestRow+2, 'PENDAPATAN '.$date);
+		$worksheet0->setCellValue('B' . $highestRow+2, $total_pendapatan);
+	
+		// Create a new worksheet
+		$newSheet = new \PhpOffice\PhpSpreadsheet\Worksheet\Worksheet($spreadsheet, $date);
+		$spreadsheet->addSheet($newSheet);
+	
+		// Set data for the new sheet
+		$worksheet = $newSheet;
+
+		$worksheet->setCellValue('A' . 1, 'PENDAPATAN');
+		$worksheet->setCellValue('A' . 2, $total_pendapatan);
+		$worksheet->setCellValue('C' . 1, 'NO');
+		$worksheet->setCellValue('D' . 1, 'TANGGAL');
+		$worksheet->setCellValue('E' . 1, 'KONSUMEN');
+		$worksheet->setCellValue('F' . 1, 'HARGA');
+		$worksheet->setCellValue('G' . 1, 'BARANG');
+
+		$row = 2;
+	
+		foreach ($data as $row_data) {
+			$col = 'C';
+	
+			foreach ($row_data as $key => $cell_data) {
+				// tambahkan head menggunakan key
+				$worksheet->setCellValue($col . $row, $cell_data);
+				$col++;
+			}
+	
+			$row++;
+		}
+	
+		// Save the modified Excel file
+		$outputFileName = 'D:/Download/riwayat.xlsx';
+		$writer = IOFactory::createWriter($spreadsheet, 'Xlsx');
+		$writer->save($outputFileName);
+	
+		// Set header for download
+		header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+		header('Content-Disposition: attachment;filename="' . basename($outputFileName) . '"');
+		header('Cache-Control: max-age=0');
+		readfile($outputFileName);
+	}
+	
 
 }
 

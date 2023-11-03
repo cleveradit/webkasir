@@ -70,6 +70,12 @@
                   <p>Rangking Konsumen</p>
                 </a>
               </li>
+          <li class="nav-item">
+                <a href="<?= base_url('masterbonus') ?>" class="nav-link">
+                  <i class="nav-icon fas fa-users"></i>
+                  <p>Master Bonus</p>
+                </a>
+              </li>
 
           <li class="nav-item">
                 <a href="<?= base_url('pengeluaran') ?>" class="nav-link">
