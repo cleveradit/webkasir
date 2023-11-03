@@ -101,7 +101,7 @@ class MasterKonsumen extends CI_Controller {
 	public function tambah_aksi()
 	{
 		$this->_rules();
-		if ($this->form_validation->run() == FALSE) {
+		if ($this->form_validation->run() == FALSE) { 
 			$this->tambah();
 		} else {
 			$data = array(
@@ -140,7 +140,7 @@ class MasterKonsumen extends CI_Controller {
 		$this->form_validation->set_rules('nama_konsumen', 'Nama Konsumen', 'required', array(
 			'required'=> '%s Harus diisi!'
 		));
-		$this->form_validation->set_rules('nopol', 'Nama Konsumen', 'required', array(
+		$this->form_validation->set_rules('nopol', 'Nopol', 'required', array(
 			'required'=> '%s Harus diisi!'
 		));
 	}

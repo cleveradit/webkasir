@@ -20,6 +20,10 @@ class My_Model extends CI_Model
 		$this->db->insert_batch($tbl, $data);
 	}
 
+	public function insert_simple($tbl)
+	{
+		$this->db->insert_simple($tbl);
+	}
 
 	public function get_data($select = NULL, $from = NULL, $where = NULL, $join = NULL, $order = NULL, $or_where = NULL)
 	{
