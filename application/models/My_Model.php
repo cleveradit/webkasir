@@ -136,6 +136,21 @@ class My_Model extends CI_Model
 		return $result;
 	}
 
+	function get_data_order_group($table, $where = null, $order = null, $group_by = null)
+	{
+		if ($where) {
+			$this->db->where($where);
+		}
+		if ($order) {
+			$this->db->order_by($order);
+		}
+		if ($group_by) {
+			$this->db->group_by($group_by);
+		}
+		$result 	=	$this->db->get($table);
+		return $result;
+	}
+
 	function save_data($nama_table, $data)
 	{
 		$this->db->insert($nama_table, $data);

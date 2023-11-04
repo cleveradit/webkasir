@@ -216,6 +216,136 @@ class RiwayatPenjualan extends CI_Controller {
 		readfile($outputFileName);
 	}
 	
+	public function download_excel_new(){
+		$transaksi_tanggal_list = $this->My_Model->get_data_order_group('transaksi', null, 'tanggal asc', "DATE_FORMAT(tanggal, '%Y-%m-%d')")->result_array();
+		$pengeluaran_tanggal_list = $this->My_Model->get_data_order_group('pengeluaran', null, 'tanggal asc', "DATE_FORMAT(tanggal, '%Y-%m-%d')")->result_array();
+		if($transaksi_tanggal_list[0]['tanggal'] < $pengeluaran_tanggal_list[0]['tanggal']){
+			$start_date = date("Y-m-d", strtotime($transaksi_tanggal_list[0]['tanggal']));
+		}else{
+			$start_date = date("Y-m-d", strtotime($pengeluaran_tanggal_list[0]['tanggal']));
+		}
+		if(end($transaksi_tanggal_list)['tanggal'] > end($pengeluaran_tanggal_list)['tanggal']){
+			$end_date = date("Y-m-d", strtotime(end($transaksi_tanggal_list)['tanggal']));
+		}else{
+			$end_date = date("Y-m-d", strtotime(end($pengeluaran_tanggal_list)['tanggal']));
+		}
+		$spreadsheet = new \PhpOffice\PhpSpreadsheet\Spreadsheet();
+		$main_sheet = new \PhpOffice\PhpSpreadsheet\Worksheet\Worksheet($spreadsheet, 'Main');
+		$spreadsheet->removeSheetByIndex(0);
+		$spreadsheet->addSheet($main_sheet);
+		$main_sheet->setCellValue('A' . 1, 'TANGGAL');
+		$main_sheet->setCellValue('B' . 1, 'PENDAPATAN');
+		$main_sheet->setCellValue('C' . 1, 'PENGELUARAN');
+		$main_sheet->setCellValue('D' . 1, 'BERSIH');
+
+		$current_date = date("Y-m-d", strtotime($start_date));
+		$keys = 0;
+		while ($current_date <= $end_date) {
+			$transaksi = $this->My_Model->get_data_order('transaksi', ['tanggal like' => $current_date.'%'], 'tanggal asc')->result_array();
+			$pengeluaran = $this->My_Model->get_data_order('pengeluaran', ['tanggal like' => $current_date.'%'], 'tanggal asc')->result_array();
+			$no = 1;
+			$total_pendapatan = 0;
+			$data = [];
+			foreach ($transaksi as $transaksi){
+				$konsumen = $this->My_Model->get_data_simple('konsumen', ['id_konsumen' => $transaksi['konsumen_id']])->row();
+				$barang = explode(',', $transaksi['barang_id']);
+				$jumlah = explode(',', $transaksi['jumlah']);
+				$table_barang = [];
+				$total_pendapatan += $transaksi['total_harga'];
+		
+				foreach ($barang as $key => $barang) {
+					$data_barang = $this->My_Model->get_data_simple('barang', ['barang_id' => $barang])->row();
+					$table_barang[] = $data_barang->nama . ' ' . $data_barang->satuan . ' (' . $jumlah[$key] . ')';
+				}
+		
+				$data[] = [
+					'no' => $no++,
+					'tanggal' => $transaksi['tanggal'],
+					'konsumen' => $konsumen->nama_konsumen,
+					'harga' => $transaksi['total_harga'],
+					'barang' => implode("\n", $table_barang), // Menggunakan "\n" sebagai pemisah untuk data barang
+				];
+			}
+
+			$sheet_per_tanggal = new \PhpOffice\PhpSpreadsheet\Worksheet\Worksheet($spreadsheet, $current_date);
+			$spreadsheet->addSheet($sheet_per_tanggal);
+
+			$sheet_per_tanggal->setCellValue('A' . 1, 'NO');
+			$sheet_per_tanggal->setCellValue('B' . 1, 'TANGGAL');
+			$sheet_per_tanggal->setCellValue('C' . 1, 'KONSUMEN');
+			$sheet_per_tanggal->setCellValue('D' . 1, 'HARGA');
+			$sheet_per_tanggal->setCellValue('E' . 1, 'BARANG');
+
+			$row = 2;
+		
+			foreach ($data as $row_data) {
+				$col = 'A';
+		
+				foreach ($row_data as $key => $cell_data) {
+					// tambahkan head menggunakan key
+					$sheet_per_tanggal->setCellValue($col . $row, $cell_data);
+					$col++;
+				}
+		
+				$row++;
+			}
+
+			$no = 1;
+			$total_pengeluaran = 0;
+			$data = [];
+			foreach ($pengeluaran as $pengeluaran){
+				$total_pengeluaran += $pengeluaran['harga_total'];
+
+				$data[] = [
+					'no' => $no++,
+					'tanggal' => $pengeluaran['tanggal'],
+					'nama' => $pengeluaran['nama_member'],
+					'barang' => $pengeluaran['nama_barang'],
+					'jumlah' => $pengeluaran['kuantitas'],
+					'harga_satuan' => $pengeluaran['harga_satuan'],
+					'harga_total' => $pengeluaran['harga_total'],
+				];
+			}
+
+			$sheet_per_tanggal->setCellValue('G' . 1, 'NO');
+			$sheet_per_tanggal->setCellValue('H' . 1, 'TANGGAL');
+			$sheet_per_tanggal->setCellValue('I' . 1, 'NAMA');
+			$sheet_per_tanggal->setCellValue('J' . 1, 'BARANG');
+			$sheet_per_tanggal->setCellValue('K' . 1, 'JUMLAH');
+			$sheet_per_tanggal->setCellValue('L' . 1, 'HARGA SATUAN');
+			$sheet_per_tanggal->setCellValue('M' . 1, 'HARGA TOTAL');
+
+			$row = 2;
+		
+			foreach ($data as $row_data) {
+				$col = 'G';
+		
+				foreach ($row_data as $key => $cell_data) {
+					// tambahkan head menggunakan key
+					$sheet_per_tanggal->setCellValue($col . $row, $cell_data);
+					$col++;
+				}
+		
+				$row++;
+			}
+			$main_sheet->setCellValue('A' . $keys+2, $current_date);
+			$main_sheet->setCellValue('B' . $keys+2, $total_pendapatan);
+			$main_sheet->setCellValue('C' . $keys+2, $total_pengeluaran);
+			$main_sheet->setCellValue('D' . $keys+2, $total_pendapatan-$total_pengeluaran);
+			$current_date = date("Y-m-d", strtotime($current_date . " +1 day"));
+			$keys += 1;
+		}
+		// Save the modified Excel file
+		$outputFileName = 'D:/Download/'.$current_date.'.xlsx';
+		$writer = IOFactory::createWriter($spreadsheet, 'Xlsx');
+		$writer->save($outputFileName);
+	
+		// Set header for download
+		header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+		header('Content-Disposition: attachment;filename="' . basename($outputFileName) . '"');
+		header('Cache-Control: max-age=0');
+		readfile($outputFileName);
+	}
 
 }
 

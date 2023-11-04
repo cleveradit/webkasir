@@ -1,5 +1,6 @@
 <?php
 defined('BASEPATH') OR exit('No direct script access allowed');
+date_default_timezone_set("Asia/Jakarta");
 
 class Pengeluaran extends CI_Controller {
 
@@ -34,6 +35,7 @@ class Pengeluaran extends CI_Controller {
 					'kuantitas' => $pengeluaran['kuantitas'],
 					'harga_satuan' => $pengeluaran['harga_satuan'],
 					'harga_total' => $pengeluaran['harga_total'],
+					'tanggal' => $pengeluaran['tanggal'],
 				];
 			}
 			// echo "<pre>";
@@ -51,12 +53,14 @@ class Pengeluaran extends CI_Controller {
 		if ($this->form_validation->run() == FALSE) {
 			$this->index();
 		} else {
+			$harga_total = $this->input->post('kuantitas') * $this->input->post('harga_satuan');
 			$data = array(
 				'nama_member' => $this->input->post('nama_member'),
 				'nama_barang' => $this->input->post('nama_barang'),
 				'kuantitas' => $this->input->post('kuantitas'),
 				'harga_satuan' => $this->input->post('harga_satuan'),
-				'harga_total' => $this->input->post('harga_total'),
+				'harga_total' => $harga_total,
+				'tanggal' => date('Y-m-d h:i:s'),
 			);
 
 			$this->My_Model->save_data('pengeluaran', $data);
@@ -77,9 +81,6 @@ public function _rules()
 			'required'=> '%s Harus diisi!'
 		));
 		$this->form_validation->set_rules('harga_satuan', 'Harga Satuan', 'required', array(
-			'required'=> '%s Harus diisi!'
-		));
-		$this->form_validation->set_rules('harga_total', 'Harga Total', 'required', array(
 			'required'=> '%s Harus diisi!'
 		));
 	}

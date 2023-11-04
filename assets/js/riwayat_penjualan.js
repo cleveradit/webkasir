@@ -3,41 +3,41 @@ $(document).ready(function() {
     // setInterval(function() {
     //     load_table(); // Reload the table
     // }, 10000);
-    executeTaskAt1005();
+    // executeTaskAt1005();
 });
 
-function runDownloadExcel() {
-    $.ajax({
-        url: base_url + 'RiwayatPenjualan/download_excel', // Ganti dengan jalur yang benar
-        method: 'GET',
-        success: function(response) {
-            console.log('Fungsi download_excel dijalankan.');
-        },
-        error: function() {
-            console.error('Gagal menjalankan download_excel.');
-        }
-    });
-}
+// function runDownloadExcel() {
+//     $.ajax({
+//         url: base_url + 'RiwayatPenjualan/download_excel', // Ganti dengan jalur yang benar
+//         method: 'GET',
+//         success: function(response) {
+//             console.log('Fungsi download_excel dijalankan.');
+//         },
+//         error: function() {
+//             console.error('Gagal menjalankan download_excel.');
+//         }
+//     });
+// }
 
 // Fungsi untuk menjalankan tugas pada pukul 10:05
-function executeTaskAt1005() {
-    var now = new Date();
-    var targetTime = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 16, 0, 0); // Atur waktu target
+// function executeTaskAt1005() {
+//     var now = new Date();
+//     var targetTime = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 16, 0, 0); // Atur waktu target
 
-    var currentTime = now.getTime();
-    var targetTimeMs = targetTime.getTime();
-    var delay = targetTimeMs - currentTime;
+//     var currentTime = now.getTime();
+//     var targetTimeMs = targetTime.getTime();
+//     var delay = targetTimeMs - currentTime;
 
-    if (delay < 0) {
-        targetTime.setDate(targetTime.getDate() + 1);
-        delay = targetTime - currentTime;
-    }
+//     if (delay < 0) {
+//         targetTime.setDate(targetTime.getDate() + 1);
+//         delay = targetTime - currentTime;
+//     }
 
-    setTimeout(function() {
-        runDownloadExcel(); // Jalankan fungsi download_excel
-        setInterval(executeTaskAt1005, 24 * 60 * 60 * 1000); // Setiap 24 jam
-    }, delay);
-}
+//     setTimeout(function() {
+//         runDownloadExcel(); // Jalankan fungsi download_excel
+//         setInterval(executeTaskAt1005, 24 * 60 * 60 * 1000); // Setiap 24 jam
+//     }, delay);
+// }
 
 // Jalankan fungsi executeTaskAt1005 untuk pertama kali
 // executeTaskAt1005();
@@ -53,6 +53,13 @@ function load_table() {
                 extend: 'copy',
                 text: 'Copy',
                 className: 'custom-dataTables-button btn btn-sm',
+            },
+            {
+                text: 'Main Excel',
+                className: 'custom-dataTables-button btn btn-sm',
+                action: function ( e, dt, button, config ) {
+                  window.location = base_url+'RiwayatPenjualan/download_excel_new';
+                }        
             },
             {
                 extend: 'excel',
@@ -73,13 +80,6 @@ function load_table() {
                 extend: 'pdf',
                 text: 'PDF',
                 className: 'custom-dataTables-button btn btn-sm',
-            },
-            {
-                text: 'Excel',
-                className: 'custom-dataTables-button btn btn-sm',
-                action: function ( e, dt, button, config ) {
-                  window.location = 'RiwayatPenjualan/download_excel';
-                }        
             }
         ],
         "ajax": {
