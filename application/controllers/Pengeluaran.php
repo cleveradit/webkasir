@@ -36,6 +36,7 @@ class Pengeluaran extends CI_Controller {
 					'harga_satuan' => $pengeluaran['harga_satuan'],
 					'harga_total' => $pengeluaran['harga_total'],
 					'tanggal' => $pengeluaran['tanggal'],
+					'id_pengeluaran' => $pengeluaran['id_pengeluaran'],
 				];
 			}
 			// echo "<pre>";
@@ -49,16 +50,38 @@ class Pengeluaran extends CI_Controller {
 
 	public function tambah_aksi()
 	{
-		$this->_rules();
-		if ($this->form_validation->run() == FALSE) {
-			$this->index();
-		} else {
-			$harga_total = $this->input->post('kuantitas') * $this->input->post('harga_satuan');
+		// $data['script'] = base_url('assets/js/pengeluaran.js');
+		// echo "<pre>";
+		// 	print_r($_POST);
+		// 	echo "</pre>";
+		// 	die();
+
+		// $this->_rules();
+		// if ($this->form_validation->run() == FALSE) {
+		// 	$this->index();
+		// } else {
+			$namabarang = implode(", ",$this->input->post('nama_barang'));
+			$kuantitas = implode(", ",$this->input->post('kuantitas'));
+			$hargasatuan = implode(", ",$this->input->post('harga_satuan'));
+			$barang = $this->input->post('nama_barang');
+			$qty = $this->input->post('kuantitas');
+			$harga_satuan = $this->input->post('harga_satuan');
+			$harga_total = 0;
+			foreach($barang as $key => $val_barang){
+			$harga_total += $qty[$key] * $harga_satuan[$key];
+			// echo "<pre>";
+			// // print_r($kuantitas);
+			// print_r($kuantitas);
+			// // echo htmlspecialchars("<br>_______");
+			// // print_r($this->input->post('kuantitas'));
+			// echo "</pre>";
+			// die();
+			}
 			$data = array(
 				'nama_member' => $this->input->post('nama_member'),
-				'nama_barang' => $this->input->post('nama_barang'),
-				'kuantitas' => $this->input->post('kuantitas'),
-				'harga_satuan' => $this->input->post('harga_satuan'),
+				'nama_barang' => $namabarang,
+				'kuantitas' => $kuantitas,
+				'harga_satuan' => $hargasatuan,
 				'harga_total' => $harga_total,
 				'tanggal' => date('Y-m-d h:i:s'),
 			);
@@ -66,7 +89,36 @@ class Pengeluaran extends CI_Controller {
 			$this->My_Model->save_data('pengeluaran', $data);
 			$this->session->set_flashdata('pesan', '<div class="alert alert-success alert-dismissible fade show" role="alert"> Data berhasil ditambahkan! <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button></div>');
 			redirect('pengeluaran');
+		// }
+	}
+
+	public function edit($id_pengeluaran)
+	{
+		$this->_rules();
+
+		if ($this->form_validation->run() == FALSE) {
+			$this->index();
+		} else {
+			$data = array(
+				'id_pengeluaran' => $id_pengeluaran,
+				'nama' => $this->input->post('nama'),
+				'nama_barang' => $this->input->post('nama_barang'),
+				'kuantitas' => $this->input->post('kuantitas'),
+				'harga_satuan' => $this->input->post('harga_satuan'),
+			);
+
+			$this->My_Model->update_data('pengeluaran', ['id_pengeluaran' => $id_pengeluaran], $data);
+			$this->session->set_flashdata('pesan', '<div class="alert alert-success alert-dismissible fade show" role="alert"> Data berhasil diubah! <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button></div>');
+			redirect('pengeluaran');
+
 		}
+	}
+
+	public function delete($id)
+	{
+		$this->My_Model->delete_data('pengeluaran', ['id_pengeluaran' => $id]);
+		$this->session->set_flashdata('pesan', '<div class="alert alert-danger alert-dismissible fade show" role="alert"> Data berhasil dihapus! <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button></div>');
+		redirect('pengeluaran');
 	}
 
 public function _rules()
