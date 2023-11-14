@@ -30,7 +30,7 @@ class RankingKonsumen extends CI_Controller {
 		// echo "</pre>";
 		// die();
 			foreach ($konsumen as $konsumen){
-				$transaksi_total = $this->My_Model->get_query("SELECT konsumen_id, SUM(total_harga) as transaksi_total, COUNT(*) as total_transaksi FROM transaksi WHERE konsumen_id = ".$konsumen->konsumen_id." GROUP BY konsumen_id")->row();
+				$transaksi_total = $this->My_Model->get_query("SELECT konsumen_id, SUM(total_harga) as transaksi_total, COUNT(*) as total_transaksi FROM transaksi WHERE (konsumen_id = ".$konsumen->konsumen_id." AND tanggal LIKE '".$date."%') GROUP BY konsumen_id")->row();
 				$nama_konsumen = $this->My_Model->get_query("SELECT nama_konsumen FROM konsumen WHERE id_konsumen =".$konsumen->konsumen_id."")->row();
 				if ($transaksi_total != null) {
 				$data['transaksi'][] = array(
