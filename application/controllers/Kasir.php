@@ -77,10 +77,10 @@ class Kasir extends CI_Controller
 		echo json_encode($data);
 	}
 
-	public function get_bonus($konsumen_id=null)
+	public function get_bonus($konsumen_id = null)
 	{
 		$param = $konsumen_id;
-		if($this->input->post('konsumen')){
+		if ($this->input->post('konsumen')) {
 			$konsumen_id = $this->input->post('konsumen');
 		}
 		// $konsumen_id = 4;
@@ -107,6 +107,7 @@ class Kasir extends CI_Controller
 			}
 			$transaksi = $this->My_Model->get_query($query)->result_array();
 			$total = 0;
+			$total_keranjang = 0;
 			// Total pembelian berdasarkan barang yang sesuai
 			foreach ($transaksi as $t) {
 				$barang_id = explode(',', $t['barang_id']);
@@ -114,11 +115,11 @@ class Kasir extends CI_Controller
 				$status_bonus = explode(',', $t['status_bonus']);
 				foreach ($barang_id as $key => $barang) {
 					foreach ($barang_bonus as $bb) {
-						if(count($status_bonus)>1){
+						if (count($status_bonus) > 1) {
 							if ($barang == $bb && $status_bonus[$key] != 1) {
 								$total += $jumlah[$key];
 							}
-						}else{
+						} else {
 							if ($barang == $bb) {
 								$total += $jumlah[$key];
 							}
@@ -126,7 +127,7 @@ class Kasir extends CI_Controller
 					}
 				}
 			}
-			if($this->input->post('id_barang')){
+			if ($this->input->post('id_barang')) {
 				// Total pembelian dengan keranjang berdasarkan barang yang sesuai
 				$barang_keranjang = json_decode($this->input->post('id_barang'));
 				$jumlah_keranjang = json_decode($this->input->post('qty'));
@@ -136,40 +137,65 @@ class Kasir extends CI_Controller
 					foreach ($barang_bonus as $bb2) {
 						if ($bka == $bb2) {
 							$total += $jumlah_keranjang[$key];
+							$total_keranjang += $jumlah_keranjang[$key];
 						}
 					}
 				}
 			}
-			// Cek apakah total memenuhi syarat pembelian bonus
-			if ($total >= $b['jumlah']) {
-				// Cek apakah konsumen sudah mengambil apa belum
-				// if ($konsumen['bonus'] != $b['bonus_id']) {
-					$bonus_barang_array = explode(',', $b['barang']);
-					$barang_text = array();
-					foreach ($bonus_barang_array as $bba){
-						$barang_row = $this->My_Model->get_data_simple('barang', ['barang_id' => $bba])->row();
-						array_push($barang_text, $barang_row->nama.'('.$barang_row->satuan.')');
+			// Cek apakah konsumen sudah mengambil apa belum
+			foreach ($transaksi as $transaksi){
+				$bonus = explode(',', $transaksi['bonus']);
+				foreach ($bonus as $bonus){
+					$bonus_jumlah = $bonus!=0 ? $this->My_Model->get_data_simple('bonus', ['bonus_id' => $bonus])->row()->jumlah : 0;
+					if ($bonus_jumlah < $b['jumlah'] && $bonus_jumlah != 0){
+						// Cek apakah total memenuhi syarat pembelian bonus
+						if ($total >= $b['jumlah']) {
+							$bonus_barang_array = explode(',', $b['barang']);
+							$barang_text = array();
+							foreach ($bonus_barang_array as $bba) {
+								$barang_row = $this->My_Model->get_data_simple('barang', ['barang_id' => $bba])->row();
+								array_push($barang_text, $barang_row->nama . '(' . $barang_row->satuan . ')');
+							}
+							$barang_response = implode(',', $barang_text);
+							$response = [
+								'status' => 'Berhak mendapat reward',
+								'bonus_id' => $b['bonus_id'],
+								'syarat_pembelian' => $b['jumlah'],
+								'total_pembelian' => $total,
+								'barang' => $barang_response,
+								'hari' => $b['hari'],
+								'uang' => $b['uang']
+							];
+						}
 					}
-					$barang_response = implode(',', $barang_text);
-					$response = [
-						'status' => 'Berhak mendapat reward',
-						'bonus_id' => $b['bonus_id'],
-						'syarat_pembelian' => $b['jumlah'],
-						'total_pembelian' => $total,
-						'barang' => $barang_response,
-						'hari' => $b['hari'],
-						'uang' => $b['uang']
-					];
-				// }
+				}
+			}
+			if ($total_keranjang >= $b['jumlah']) {
+				$bonus_barang_array = explode(',', $b['barang']);
+				$barang_text = array();
+				foreach ($bonus_barang_array as $bba) {
+					$barang_row = $this->My_Model->get_data_simple('barang', ['barang_id' => $bba])->row();
+					array_push($barang_text, $barang_row->nama . '(' . $barang_row->satuan . ')');
+				}
+				$barang_response = implode(',', $barang_text);
+				$response = [
+					'status' => 'Berhak mendapat reward',
+					'bonus_id' => $b['bonus_id'],
+					'syarat_pembelian' => $b['jumlah'],
+					'total_pembelian' => $total,
+					'barang' => $barang_response,
+					'hari' => $b['hari'],
+					'uang' => $b['uang']
+				];
 			}
 		}
-		if(!isset($response)){
+		if (!isset($response)) {
 			$bonus_terdekat = $this->My_Model->get_data_order('bonus', ['jumlah >' => $total], 'jumlah ASC')->row();
 			$get_bonus_barang_terdekat = explode(',', $bonus_terdekat->barang);
 			$nama_satuan_bonus_terdekat = array();
-			foreach ($get_bonus_barang_terdekat as $gbbt){
+			foreach ($get_bonus_barang_terdekat as $gbbt) {
 				$barang_bonus = $this->My_Model->get_data_simple('barang', ['barang_id' => $gbbt])->row();
-				array_push($nama_satuan_bonus_terdekat, $barang_bonus->nama.'('.$barang_bonus->satuan.')');
+				array_push($nama_satuan_bonus_terdekat, $barang_bonus->nama . '(' . $barang_bonus->satuan . ')');
 			}
 			$barang_response_terdekat = implode(',', $nama_satuan_bonus_terdekat);
 			$response = [
@@ -182,9 +208,9 @@ class Kasir extends CI_Controller
 				'uang' => $bonus_terdekat->uang
 			];
 		}
-		if($param){
+		if ($param) {
 			return $response;
-		}else{
+		} else {
 			echo json_encode($response);
 		}
 	}
@@ -205,13 +231,16 @@ class Kasir extends CI_Controller
 			'total_bayar' => $this->input->post('total_bayar'),
 			'konsumen_id' => $this->input->post('konsumen'),
 			'nota' => $this->input->post('nota'),
-			'bonus' => $this->input->post('bonus'),
+			'bonus' => implode(',', json_decode($this->input->post('status_bonus'))),
 			'status_bonus' => implode(',', json_decode($this->input->post('status_bonus'))),
 		);
 		if ($this->My_Model->save_data('transaksi', $data)) {
 			$data['id'] = $this->db->insert_id();
 			$data['status'] = $this->input->post('status');
 			$data['bonus_id'] = $this->input->post('bonus_id');
+
+			$bonus = $this->My_Model->get_data_simple('bonus', ['bonus_id' => $data['bonus_id']])->row();
+			$data['bonus_text'] = 'Rp.'.$bonus->uang;
 			echo json_encode($data);
 		}
 		$data = $this->input->post('form');
@@ -221,7 +250,7 @@ class Kasir extends CI_Controller
 	{
 		$transaksi = $this->My_Model->get_data_simple('transaksi', ['transaksi_id' => $id])->row();
 		$bonus = $this->get_bonus($transaksi->konsumen_id);
-		
+
 		$tanggal = new DateTime($transaksi->tanggal);
 		$barcode = explode(',', $transaksi->barang_id);
 		$qty = explode(',', $transaksi->jumlah);
@@ -237,7 +266,7 @@ class Kasir extends CI_Controller
 			$value->harga = $value->harga * $qty[$key];
 		}
 		$data = array(
-			'bonus' => $bonus['total_pembelian'].'/'.$bonus['syarat_pembelian'].' Rp. '. $bonus['uang'],
+			'bonus' => $bonus['total_pembelian'] . '/' . $bonus['syarat_pembelian'] . ' Rp. ' . $bonus['uang'],
 			'nota' => $transaksi->nota,
 			'tanggal' => $transaksi->tanggal,
 			'barang' => $dataBarang,
@@ -248,7 +277,8 @@ class Kasir extends CI_Controller
 		$this->load->view('cetak', $data);
 	}
 
-	public function reset_bonus($konsumen_id, $bonus_id){
+	public function reset_bonus($konsumen_id, $bonus_id)
+	{
 		// Get bonus
 		// Get barang bonus
 		// Get transaksi where konsumen_id & like barang bonus
@@ -258,33 +288,90 @@ class Kasir extends CI_Controller
 		$query = 'SELECT * FROM transaksi WHERE konsumen_id = ' . $konsumen_id;
 
 		$query .= ' AND tanggal >= DATE_SUB(NOW(), INTERVAL ' . $bonus['hari'] . ' DAY) AND (';
-			$barang_bonus = explode(',', $bonus['barang']);
-			foreach ($barang_bonus as $key => $value) {
-				if (count($barang_bonus) > 1) {
-					if ($key == 0) {
-						$query .= 'barang_id LIKE "%' . $value . '%"';
-					} else {
-						$query .= 'OR barang_id LIKE "%' . $value . '%")';
-					}
+		$barang_bonus = explode(',', $bonus['barang']);
+		foreach ($barang_bonus as $key => $value) {
+			if (count($barang_bonus) > 1) {
+				if ($key == 0) {
+					$query .= 'barang_id LIKE "%' . $value . '%"';
 				} else {
-					$query .= 'barang_id LIKE "%' . $value . '%")';
+					$query .= 'OR barang_id LIKE "%' . $value . '%")';
 				}
+			} else {
+				$query .= 'barang_id LIKE "%' . $value . '%")';
 			}
+		}
 		$transaksi = $this->My_Model->get_query($query)->result_array();
-		
-		foreach ($transaksi as $transaksi){
+
+		foreach ($transaksi as $transaksi) {
 			$transaksi_barang = explode(',', $transaksi['barang_id']);
 			$sama = [];
-			foreach ($transaksi_barang as $key => $transaksi_barangs){
+			foreach ($transaksi_barang as $key => $transaksi_barangs) {
 				$sama[$key] = 0;
-				foreach ($barang_bonus as $bb){
-					if ($transaksi_barangs == $bb){
+				foreach ($barang_bonus as $bb) {
+					if ($transaksi_barangs == $bb) {
 						$sama[$key] = 1;
+					}
+				}
+				$transaksi_bonus = explode(',', $transaksi['bonus']);
+				$sama_bonus = [];
+				foreach ($transaksi_bonus as $keys => $transaksi_bonuss) {
+					$sama_bonus[$keys] = $transaksi_bonuss;
+					foreach ($barang_bonus as $bb) {
+						if ($transaksi_barangs == $bb) {
+							$sama_bonus[$keys] = 0;
+						}
 					}
 				}
 			}
 			$status_bonus = implode(',', $sama);
-			$this->My_Model->update_data('transaksi',['transaksi_id' => $transaksi['transaksi_id']],['status_bonus' => $status_bonus]);
+
+			$bonus = implode(',', $sama_bonus);
+			// echo "<pre>";
+			// print_r($bonus);
+			// echo "</pre>";
+			// die();
+			$this->My_Model->update_data('transaksi', ['transaksi_id' => $transaksi['transaksi_id']], ['status_bonus' => $status_bonus, 'bonus' => $bonus]);
+		}
+	}
+
+	public function keep_bonus($konsumen_id, $bonus_id)
+	{
+		// Get bonus
+		// Get barang bonus
+		// Get transaksi where konsumen_id & like barang bonus
+		// Update transaksi yang barang bonusnya sama 'reward telah diambil'
+		$bonus = $this->My_Model->get_data_simple('bonus', ['bonus_id' => $bonus_id])->row_array();
+
+		$query = 'SELECT * FROM transaksi WHERE konsumen_id = ' . $konsumen_id;
+
+		$query .= ' AND tanggal >= DATE_SUB(NOW(), INTERVAL ' . $bonus['hari'] . ' DAY) AND (';
+		$barang_bonus = explode(',', $bonus['barang']);
+		foreach ($barang_bonus as $key => $value) {
+			if (count($barang_bonus) > 1) {
+				if ($key == 0) {
+					$query .= 'barang_id LIKE "%' . $value . '%"';
+				} else {
+					$query .= 'OR barang_id LIKE "%' . $value . '%")';
+				}
+			} else {
+				$query .= 'barang_id LIKE "%' . $value . '%")';
+			}
+		}
+		$transaksi = $this->My_Model->get_query($query)->result_array();
+
+		foreach ($transaksi as $transaksi) {
+			$transaksi_barang = explode(',', $transaksi['barang_id']);
+			$sama = [];
+			foreach ($transaksi_barang as $key => $transaksi_barangs) {
+				$sama[$key] = 0;
+				foreach ($barang_bonus as $bb) {
+					if ($transaksi_barangs == $bb) {
+						$sama[$key] = $bonus_id;
+					}
+				}
+			}
+			$bonus = implode(',', $sama);
+			$this->My_Model->update_data('transaksi', ['transaksi_id' => $transaksi['transaksi_id']], ['bonus' => $bonus]);
 		}
 	}
 }

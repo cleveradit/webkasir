@@ -30,7 +30,7 @@
                     <input type="number" class="form-control col-sm-6" placeholder="Jumlah" id="jumlah">
                 </div>
                 <div class="form-group">
-                    <button id="tambah" class="btn btn-sm btn-success" onclick="addKeranjang()">Tambah</button>
+                    <button id="tambah" class="btn btn-sm btn-success" onclick="addKeranjang()" disabled>Tambah</button>
                     <button id="bayar" class="btn btn-sm btn-info" data-toggle="modal" data-target="#modal"
                         disabled>Bayar</button>
                 </div>

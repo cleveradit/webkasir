@@ -69,7 +69,6 @@
 						<div class="form-group">
 							<label>Status</label>
 							<select name="status" class="form-control">
-								<option value="null">pilih</option>
 								<option <?= $mb['status']=='aktif' ? 'selected' : '' ?> value="aktif">aktif</option>
 								<option <?= $mb['status']=='tidak aktif' ? 'selected' : '' ?> value="tidak aktif">tidak aktif</option>
 							</select>

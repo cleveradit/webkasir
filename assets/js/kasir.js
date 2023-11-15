@@ -1,5 +1,17 @@
-// create nota
+$(document).ready(function(){
+	$('#jumlah').on("keyup", function() {
+		let jumlah = $('#jumlah').val();
+		if (jumlah == ''){
+			$('#tambah').attr('disabled', true);
+			console.log('disabled');
+		} else {
+			$('#tambah').removeAttr('disabled');
+			console.log('not disabled');
+		}
+	});
+});
 
+// create nota
 function nota(jumlah) {
 	let hasil = "",
 		char = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789",
@@ -267,7 +279,7 @@ function checkout() {
 			if (isCetak) {
 				if (res.status == "Berhak mendapat reward") {
 					Swal.fire({
-						title: res.bonus,
+						title: res.bonus_text,
 						text: "Apakah konsumen ingin mengambil reward ini?",
 						icon: "warning",
 						showCancelButton: true,
@@ -289,9 +301,19 @@ function checkout() {
 								},
 							});
 						} else if (result.dismiss === Swal.DismissReason.cancel) {
-							Swal.fire("Sukses", "Sukses Membayar", "success").then(() =>
-								(window.location.href = `${base_url + "kasir/cetak/"}${res.id}`)
-							);
+							$.ajax({
+								url: base_url + "Kasir/keep_bonus/" + res.konsumen_id + "/" + res.bonus_id,
+								type: "POST",
+								success: function (response) {
+									Swal.fire("Sukses", "Sukses Membayar", "success").then(() =>
+										(window.location.href = `${base_url + "kasir/cetak/"}${res.id}`)
+									);
+								},
+								error: function (xhr) {
+									console.log(xhr.responseText);
+									Swal.fire("Error", "Gagal keep bonus.", "error");
+								},
+							});
 						}
 					});
 				} else {
@@ -302,7 +324,7 @@ function checkout() {
 			} else {
 				if (res.status == "Berhak mendapat reward") {
 					Swal.fire({
-						title: res.bonus,
+						title: res.bonus_text,
 						text: "Apakah konsumen ingin mengambil reward ini?",
 						icon: "warning",
 						showCancelButton: true,
@@ -324,9 +346,19 @@ function checkout() {
 								},
 							});
 						} else if (result.dismiss === Swal.DismissReason.cancel) {
-							Swal.fire("Sukses", "Sukses Membayar", "success").then(() =>
-								window.location.reload()
-							);
+							$.ajax({
+								url: base_url + "Kasir/keep_bonus/" + res.konsumen_id + "/" + res.bonus_id,
+								type: "POST",
+								success: function (response) {
+									Swal.fire("Sukses", "Sukses Membayar", "success").then(() =>
+										window.location.reload()
+									);
+								},
+								error: function (xhr) {
+									console.log(xhr.responseText);
+									Swal.fire("Error", "Gagal keep bonus.", "error");
+								},
+							});
 						}
 					});
 				} else {

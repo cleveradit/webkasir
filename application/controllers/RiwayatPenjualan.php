@@ -4,6 +4,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 use PhpOffice\PhpSpreadsheet\IOFactory;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
+use PhpOffice\PhpSpreadsheet\Style\Alignment;
 
 class RiwayatPenjualan extends CI_Controller {
 
@@ -217,18 +218,21 @@ class RiwayatPenjualan extends CI_Controller {
 	}
 	
 	public function download_excel_new(){
-		$transaksi_tanggal_list = $this->My_Model->get_data_order_group('transaksi', null, 'tanggal asc', "DATE_FORMAT(tanggal, '%Y-%m-%d')")->result_array();
-		$pengeluaran_tanggal_list = $this->My_Model->get_data_order_group('pengeluaran', null, 'tanggal asc', "DATE_FORMAT(tanggal, '%Y-%m-%d')")->result_array();
-		if($transaksi_tanggal_list[0]['tanggal'] < $pengeluaran_tanggal_list[0]['tanggal']){
-			$start_date = date("Y-m-d", strtotime($transaksi_tanggal_list[0]['tanggal']));
-		}else{
-			$start_date = date("Y-m-d", strtotime($pengeluaran_tanggal_list[0]['tanggal']));
-		}
-		if(end($transaksi_tanggal_list)['tanggal'] > end($pengeluaran_tanggal_list)['tanggal']){
-			$end_date = date("Y-m-d", strtotime(end($transaksi_tanggal_list)['tanggal']));
-		}else{
-			$end_date = date("Y-m-d", strtotime(end($pengeluaran_tanggal_list)['tanggal']));
-		}
+		// $transaksi_tanggal_list = $this->My_Model->get_data_order_group('transaksi', ['tanggal like' => '%'.date("Y-m").'%'], 'tanggal asc', "DATE_FORMAT(tanggal, '%Y-%m-%d')")->result_array();
+		// $pengeluaran_tanggal_list = $this->My_Model->get_data_order_group('pengeluaran', ['tanggal like' => '%'.date("Y-m").'%'], 'tanggal asc', "DATE_FORMAT(tanggal, '%Y-%m-%d')")->result_array();
+		
+		// if($transaksi_tanggal_list[0]['tanggal'] < $pengeluaran_tanggal_list[0]['tanggal']){
+		// 	$start_date = date("Y-m-d", strtotime($transaksi_tanggal_list[0]['tanggal']));
+		// }else{
+		// 	$start_date = date("Y-m-d", strtotime($pengeluaran_tanggal_list[0]['tanggal']));
+		// }
+		// if(end($transaksi_tanggal_list)['tanggal'] > end($pengeluaran_tanggal_list)['tanggal']){
+		// 	$end_date = date("Y-m-d", strtotime(end($transaksi_tanggal_list)['tanggal']));
+		// }else{
+		// 	$end_date = date("Y-m-d", strtotime(end($pengeluaran_tanggal_list)['tanggal']));
+		// }
+		$start_date = date("Y-m-01");
+		$end_date = date('Y-m-t');;
 		$spreadsheet = new \PhpOffice\PhpSpreadsheet\Spreadsheet();
 		$main_sheet = new \PhpOffice\PhpSpreadsheet\Worksheet\Worksheet($spreadsheet, 'Main');
 		$spreadsheet->removeSheetByIndex(0);
@@ -239,7 +243,30 @@ class RiwayatPenjualan extends CI_Controller {
 		$main_sheet->setCellValue('D' . 1, 'BERSIH');
 
 		$current_date = date("Y-m-d", strtotime($start_date));
+		$sheet_per_bulan = new \PhpOffice\PhpSpreadsheet\Worksheet\Worksheet($spreadsheet, date("Y-m"));
+		$spreadsheet->addSheet($sheet_per_bulan);
+		$sheet_per_bulan->setCellValue('A' . 1, 'PENJUALAN');
+		$sheet_per_bulan->mergeCells('A1:E1');
+		$sheet_per_bulan->getStyle('A1')->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);;
+		$sheet_per_bulan->setCellValue('A' . 2, 'NO');
+		$sheet_per_bulan->setCellValue('B' . 2, 'TANGGAL');
+		$sheet_per_bulan->setCellValue('C' . 2, 'KONSUMEN');
+		$sheet_per_bulan->setCellValue('D' . 2, 'HARGA');
+		$sheet_per_bulan->setCellValue('E' . 2, 'BARANG');
+
+		$sheet_per_bulan->setCellValue('G' . 1, 'PENGELUARAN');
+		$sheet_per_bulan->mergeCells('G1:M1');
+		$sheet_per_bulan->getStyle('G1')->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
+		$sheet_per_bulan->setCellValue('G' . 2, 'NO');
+		$sheet_per_bulan->setCellValue('H' . 2, 'TANGGAL');
+		$sheet_per_bulan->setCellValue('I' . 2, 'NAMA');
+		$sheet_per_bulan->setCellValue('J' . 2, 'BARANG');
+		$sheet_per_bulan->setCellValue('K' . 2, 'JUMLAH');
+		$sheet_per_bulan->setCellValue('L' . 2, 'HARGA SATUAN');
+		$sheet_per_bulan->setCellValue('M' . 2, 'HARGA TOTAL');
 		$keys = 0;
+		$row_transaksi = 3;
+		$row_pengeluaran = 3;
 		while ($current_date <= $end_date) {
 			$transaksi = $this->My_Model->get_data_order('transaksi', ['tanggal like' => $current_date.'%'], 'tanggal asc')->result_array();
 			$pengeluaran = $this->My_Model->get_data_order('pengeluaran', ['tanggal like' => $current_date.'%'], 'tanggal asc')->result_array();
@@ -266,29 +293,21 @@ class RiwayatPenjualan extends CI_Controller {
 					'barang' => implode("\n", $table_barang), // Menggunakan "\n" sebagai pemisah untuk data barang
 				];
 			}
-
-			$sheet_per_tanggal = new \PhpOffice\PhpSpreadsheet\Worksheet\Worksheet($spreadsheet, $current_date);
-			$spreadsheet->addSheet($sheet_per_tanggal);
-
-			$sheet_per_tanggal->setCellValue('A' . 1, 'NO');
-			$sheet_per_tanggal->setCellValue('B' . 1, 'TANGGAL');
-			$sheet_per_tanggal->setCellValue('C' . 1, 'KONSUMEN');
-			$sheet_per_tanggal->setCellValue('D' . 1, 'HARGA');
-			$sheet_per_tanggal->setCellValue('E' . 1, 'BARANG');
-
-			$row = 2;
-		
-			foreach ($data as $row_data) {
-				$col = 'A';
-		
-				foreach ($row_data as $key => $cell_data) {
-					// tambahkan head menggunakan key
-					$sheet_per_tanggal->setCellValue($col . $row, $cell_data);
-					$col++;
+			if($transaksi){
+				foreach ($data as $row_data) {
+					$col = 'A';
+			
+					foreach ($row_data as $key => $cell_data) {
+						// tambahkan head menggunakan key
+						$sheet_per_bulan->setCellValue($col . $row_transaksi, $cell_data);
+						$col++;
+					}
+			
+					$row_transaksi++;
 				}
-		
-				$row++;
+				$row_transaksi++;
 			}
+		
 
 			$no = 1;
 			$total_pengeluaran = 0;
@@ -307,27 +326,21 @@ class RiwayatPenjualan extends CI_Controller {
 				];
 			}
 
-			$sheet_per_tanggal->setCellValue('G' . 1, 'NO');
-			$sheet_per_tanggal->setCellValue('H' . 1, 'TANGGAL');
-			$sheet_per_tanggal->setCellValue('I' . 1, 'NAMA');
-			$sheet_per_tanggal->setCellValue('J' . 1, 'BARANG');
-			$sheet_per_tanggal->setCellValue('K' . 1, 'JUMLAH');
-			$sheet_per_tanggal->setCellValue('L' . 1, 'HARGA SATUAN');
-			$sheet_per_tanggal->setCellValue('M' . 1, 'HARGA TOTAL');
-
-			$row = 2;
-		
-			foreach ($data as $row_data) {
-				$col = 'G';
-		
-				foreach ($row_data as $key => $cell_data) {
-					// tambahkan head menggunakan key
-					$sheet_per_tanggal->setCellValue($col . $row, $cell_data);
-					$col++;
+			if($pengeluaran){
+				foreach ($data as $row_data) {
+					$col = 'G';
+			
+					foreach ($row_data as $key => $cell_data) {
+						// tambahkan head menggunakan key
+						$sheet_per_bulan->setCellValue($col . $row_pengeluaran, $cell_data);
+						$col++;
+					}
+			
+					$row_pengeluaran++;
 				}
-		
-				$row++;
+				$row_pengeluaran++;
 			}
+
 			$main_sheet->setCellValue('A' . $keys+2, $current_date);
 			$main_sheet->setCellValue('B' . $keys+2, $total_pendapatan);
 			$main_sheet->setCellValue('C' . $keys+2, $total_pengeluaran);
@@ -336,7 +349,7 @@ class RiwayatPenjualan extends CI_Controller {
 			$keys += 1;
 		}
 		// Save the modified Excel file
-		$outputFileName = 'D:/Download/'.$current_date.'.xlsx';
+		$outputFileName = 'D:/Download/'.date("Y-m-d").'.xlsx';
 		$writer = IOFactory::createWriter($spreadsheet, 'Xlsx');
 		$writer->save($outputFileName);
 	

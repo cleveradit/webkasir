@@ -1,7 +1,7 @@
 <form action="<?= base_url('masterbonus/tambah_aksi') ?>" method="POST">
 	<div class="form-group">
 		<label>Barang</label>
-		<select class="form-select" id="select-multiple" type="text" name="barang[]" multiple="multiple" style="width: 100%;">
+		<select class="form-select" id="select-multiple" type="text" name="barang[]" multiple="multiple" style="width: 100%;" required>
             <?php foreach ($barang as $b): ?>
                 <option value="<?= $b['barang_id'] ?>"><?= $b['nama'] ?> (<?= $b['satuan'] ?>)</option>
             <?php endforeach ?>
@@ -9,20 +9,19 @@
 	</div>
 	<div class="form-group">
 		<label>Jumlah</label>
-		<input type="text" name="jumlah" class="form-control">
+		<input type="text" name="jumlah" class="form-control" required>
 	</div>
 	<div class="form-group">
 		<label>Hari</label>
-		<input type="text" name="hari" class="form-control">
+		<input type="text" name="hari" class="form-control" required>
 	</div>
 	<div class="form-group">
 		<label>Reward</label>
-		<input type="text" name="uang" class="form-control">
+		<input type="text" name="uang" class="form-control" required>
 	</div>
 	<div class="form-group">
 		<label>Status</label>
-		<select name="status" class="form-control">
-			<option value="null">pilih</option>
+		<select name="status" class="form-control" required>
 			<option value="aktif">aktif</option>
 			<option value="tidak aktif">tidak aktif</option>
 		</select>

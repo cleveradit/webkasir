@@ -26,7 +26,7 @@ class Pengeluaran extends CI_Controller {
 	public function load_data(){
 		if ($this->My_Model->get_data_simple('pengeluaran', null)->num_rows() > 0) {
 			$no = 1;
-			$pengeluaran = $this->My_Model->get_data_simple('pengeluaran', null)->result_array();
+			$pengeluaran = $this->My_Model->get_data_order('pengeluaran', null, 'tanggal desc')->result_array();
 			foreach ($pengeluaran as $pengeluaran){
 				$pengeluaran_response []= [
 					'no' => $no++,

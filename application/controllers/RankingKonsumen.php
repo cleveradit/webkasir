@@ -1,7 +1,8 @@
 <?php
-defined('BASEPATH') OR exit('No direct script access allowed');
+defined('BASEPATH') or exit('No direct script access allowed');
 
-class RankingKonsumen extends CI_Controller {
+class RankingKonsumen extends CI_Controller
+{
 
 	public function index()
 	{
@@ -11,7 +12,7 @@ class RankingKonsumen extends CI_Controller {
 		$this->load->model('Model_Login');
 		$this->Model_Login->keamanan();
 
-		
+
 
 		$this->load->view('templates/header', $data);
 		$this->load->view('templates/sidebar', $data);
@@ -19,11 +20,12 @@ class RankingKonsumen extends CI_Controller {
 		$this->load->view('templates/footer');
 	}
 
-	public function load_data(){
+	public function load_data()
+	{
 		$this->load->model('My_Model');
-		if ($this->My_Model->get_data_simple('transaksi')->num_rows() > 0) {
-			$date = date("Y-m");
-			$konsumen = $this->My_Model->get_query("SELECT konsumen_id, SUM(total_harga) as transaksi_total FROM transaksi WHERE tanggal LIKE '".$date."%' GROUP BY konsumen_id ORDER BY SUM(total_harga) desc LIMIT 5")->result();
+		$date = date("Y-m");
+		if ($this->My_Model->get_data_simple('transaksi', ['tanggal like' => $date.'%'])->num_rows() > 0) {
+			$konsumen = $this->My_Model->get_query("SELECT konsumen_id, SUM(total_harga) as transaksi_total FROM transaksi WHERE tanggal LIKE '" . $date . "%' GROUP BY konsumen_id ORDER BY SUM(total_harga) desc LIMIT 5")->result();
 			$no = 1;
 		// 	echo "<pre>";
 		// print_r($konsumen);
@@ -33,23 +35,29 @@ class RankingKonsumen extends CI_Controller {
 				$transaksi_total = $this->My_Model->get_query("SELECT konsumen_id, SUM(total_harga) as transaksi_total, COUNT(*) as total_transaksi FROM transaksi WHERE (konsumen_id = ".$konsumen->konsumen_id." AND tanggal LIKE '".$date."%') GROUP BY konsumen_id")->row();
 				$nama_konsumen = $this->My_Model->get_query("SELECT nama_konsumen FROM konsumen WHERE id_konsumen =".$konsumen->konsumen_id."")->row();
 				if ($transaksi_total != null) {
-				$data['transaksi'][] = array(
-					'no'			=> $no++,
-					'nama_konsumen' => $nama_konsumen->nama_konsumen,
-					'transaksi_total' => $transaksi_total->transaksi_total,
-					'total_transaksi' => $transaksi_total->total_transaksi,
-				);
+					$data['transaksi'][] = array(
+						'no'			=> $no++,
+						'nama_konsumen' => $nama_konsumen->nama_konsumen,
+						'transaksi_total' => $transaksi_total->transaksi_total,
+						'total_transaksi' => $transaksi_total->total_transaksi,
+					);
 				}
 			}
-		// 	echo "<pre>";
-		// print_r($data['transaksi']);
-		// echo "</pre>";
-		// die();
-			header('Content-Type: application/json');
-    		echo json_encode(['data' => $data['transaksi']]);
+		}else{
+			$data['transaksi'][0] = array(
+				'no'			  => null,
+				'nama_konsumen'   => null,
+				'transaksi_total' => null,
+				'total_transaksi' => null,
+			);
+			// echo "<pre>";
+			// print_r($this->My_Model->get_data_simple('transaksi', ['tanggal like' => $date.'%'])->num_rows());
+			// echo "</pre>";
+			// die();
 		}
+		header('Content-Type: application/json');
+		echo json_encode(['data' => $data['transaksi']]);
 	}
-
 }
 
 /* End of file RangkingKonsumen.php */
