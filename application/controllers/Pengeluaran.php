@@ -16,6 +16,11 @@ class Pengeluaran extends CI_Controller {
 		$data['script'] = base_url('assets/js/pengeluaran.js');
 		$this->load->model('Model_Login');
 		$this->Model_Login->keamanan();
+		$data['pengeluaran'] = $this->My_Model->get_data_simple('pengeluaran')->result();
+		// echo "<pre>";
+		// print_r($data['pengeluaran']);
+		// echo "</pre>";
+		// die();
 
 		$this->load->view('templates/header', $data);
 		$this->load->view('templates/sidebar', $data);
@@ -37,10 +42,11 @@ class Pengeluaran extends CI_Controller {
 					'harga_total' => $pengeluaran['harga_total'],
 					'tanggal' => $pengeluaran['tanggal'],
 					'id_pengeluaran' => $pengeluaran['id_pengeluaran'],
+					'nota_pengeluaran' => $pengeluaran['nota_pengeluaran'],
 				];
 			}
 			// echo "<pre>";
-			// print_r($pengeluaran_response);
+			// print_r($pengeluaran_response[1]['nota_pengeluaran']==null?'null':'not');
 			// echo "</pre>";
 			// die();
 			header('Content-Type: application/json');
@@ -120,6 +126,43 @@ class Pengeluaran extends CI_Controller {
 		$this->session->set_flashdata('pesan', '<div class="alert alert-danger alert-dismissible fade show" role="alert"> Data berhasil dihapus! <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button></div>');
 		redirect('pengeluaran');
 	}
+
+	public function upload($id)
+	{
+		// Pastikan direktori upload tersedia
+		$uploadDir = './assets/pengeluaran/';
+		if (!is_dir($uploadDir)) {
+			mkdir($uploadDir, 0777, true);
+		}
+
+		// Mengatur folder berdasarkan tanggal (tahun/bulan/hari)
+		$uploadDirDate = $uploadDir . date('Y/m/d/') ;
+		if (!is_dir($uploadDirDate)) {
+			mkdir($uploadDirDate, 0777, true);
+		}
+
+		// Konfigurasi upload
+		$config['upload_path'] = $uploadDirDate;
+		$config['allowed_types'] = 'gif|jpg|jpeg|png'; // Sesuaikan dengan jenis file yang diizinkan
+		$config['max_size'] = 1024; // Sesuaikan dengan ukuran maksimum file (dalam kilobita)
+
+		$this->load->library('upload', $config);
+
+		if (!$this->upload->do_upload('nota_pengeluaran')) {
+			$error = array('error' => $this->upload->display_errors());
+			print_r($error);
+		} else {
+			$upload = ($this->upload->data());
+			$data = array(
+				'nota_pengeluaran' => '/assets/pengeluaran/'.date('Y/m/d/').$upload['file_name'],
+			);
+
+			$this->My_Model->update_data('pengeluaran', ['id_pengeluaran' => $id], $data);
+			$this->session->set_flashdata('pesan', '<div class="alert alert-success alert-dismissible fade show" role="alert"> Data berhasil diubah! <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button></div>');
+			redirect('pengeluaran');
+		}
+	}
+
 
 public function _rules()
 	{
