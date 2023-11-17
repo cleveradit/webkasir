@@ -29,7 +29,7 @@ class MasterBonus extends CI_Controller {
 	}
 
 	public function load_data(){
-		if ($this->My_Model->get_data_simple('bonus')->num_rows() > 0) {
+		if ($this->My_Model->get_data_simple('bonus')->num_rows() <> null) {
 			$no = 1;
 			$bonus_array = $this->My_Model->get_data_simple('bonus')->result_array();
 			foreach ($bonus_array as $bonus){
@@ -52,6 +52,19 @@ class MasterBonus extends CI_Controller {
 			}
 			header('Content-Type: application/json');
     		echo json_encode(['data' => $data['bonus_response']]);
+		}
+		else {
+			$data['bonus_response'][] = array(
+				'no'			=> null,
+				'bonus_id' => null,
+				'barang' => null,
+				'jumlah' => null,
+				'hari' => null,
+				'uang' => null,
+				'status' => null,
+			);
+		header('Content-Type: application/json');
+		echo json_encode(['data' => $data['bonus_response']]);
 		}
 	}
 

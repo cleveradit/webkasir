@@ -25,7 +25,7 @@ class MasterKonsumen extends CI_Controller {
 	}
 
 	public function load_data(){
-		if ($this->MasterKonsumen_model->get_data('transaksi')->num_rows() > 0) {
+		if ($this->MasterKonsumen_model->get_data('konsumen')->num_rows() <> null) {
 			$no = 1;
 			$masterkonsumen = $this->MasterKonsumen_model->get_data('konsumen')->result_array();
 			foreach ($masterkonsumen as $konsumen){
@@ -37,6 +37,17 @@ class MasterKonsumen extends CI_Controller {
 					'created_at' => $konsumen['created_at'],
 				];
 			}
+			header('Content-Type: application/json');
+			echo json_encode(['data' => $konsumen_response]);
+		}
+		else {
+			$konsumen_response[] = [
+				'no' => null,
+				'id_konsumen' => null,
+				'nama_konsumen' => null,
+				'nopol' => null,
+				'created_at' => null,
+			];
 			header('Content-Type: application/json');
 			echo json_encode(['data' => $konsumen_response]);
 		}

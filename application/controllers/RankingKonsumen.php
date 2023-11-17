@@ -24,7 +24,7 @@ class RankingKonsumen extends CI_Controller
 	{
 		$this->load->model('My_Model');
 		$date = date("Y-m");
-		if ($this->My_Model->get_data_simple('transaksi', ['tanggal like' => $date.'%'])->num_rows() > 0) {
+		if ($this->My_Model->get_data_simple('transaksi', ['tanggal like' => $date.'%'])->num_rows() <> null) {
 			$konsumen = $this->My_Model->get_query("SELECT konsumen_id, SUM(total_harga) as transaksi_total FROM transaksi WHERE tanggal LIKE '" . $date . "%' GROUP BY konsumen_id ORDER BY SUM(total_harga) desc LIMIT 5")->result();
 			$no = 1;
 		// 	echo "<pre>";

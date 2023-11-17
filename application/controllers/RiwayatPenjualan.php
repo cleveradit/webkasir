@@ -103,7 +103,7 @@ class RiwayatPenjualan extends CI_Controller {
 	}
 
 	public function load_data(){
-		if ($this->My_Model->get_data_simple('transaksi')->num_rows() > 0) {
+		if ($this->My_Model->get_data_simple('transaksi')->num_rows() <> null) {
 			$transaksi = $this->My_Model->get_data_order('transaksi',null,'tanggal desc')->result();
 			$no = 1;
 			foreach ($transaksi as $transaksi){
@@ -127,6 +127,19 @@ class RiwayatPenjualan extends CI_Controller {
 				);
 			}
 			header('Content-Type: application/json');
+    		echo json_encode(['data' => $data['penjualan']]);
+		}
+		else {
+			$data['penjualan'][] = array(
+				'no'			=> null,
+				'transaksi_id' => null,
+				'tanggal' => null,
+				'nama_konsumen' => null,
+				'total_harga' => null,
+				'total_bayar' => null,
+				'barang' => null,
+			);
+				header('Content-Type: application/json');
     		echo json_encode(['data' => $data['penjualan']]);
 		}
 	}

@@ -29,9 +29,14 @@ class Pengeluaran extends CI_Controller {
 	}
 
 	public function load_data(){
-		if ($this->My_Model->get_data_simple('pengeluaran', null)->num_rows() > 0) {
+		if ($this->My_Model->get_data_simple('pengeluaran', null)->num_rows() <> null) {
+			
 			$no = 1;
 			$pengeluaran = $this->My_Model->get_data_order('pengeluaran', null, 'tanggal desc')->result_array();
+			// echo "<pre>";
+			// print_r($pengeluaran);
+			// echo "</pre>";
+			// die();
 			foreach ($pengeluaran as $pengeluaran){
 				$pengeluaran_response []= [
 					'no' => $no++,
@@ -49,6 +54,21 @@ class Pengeluaran extends CI_Controller {
 			// print_r($pengeluaran_response[1]['nota_pengeluaran']==null?'null':'not');
 			// echo "</pre>";
 			// die();
+			header('Content-Type: application/json');
+			echo json_encode(['data' => $pengeluaran_response]);
+		}
+		else {
+			$pengeluaran_response []= [
+				'no' => null,
+				'nama_member' => null,
+				'nama_barang' => null,
+				'kuantitas' => null,
+				'harga_satuan' => null,
+				'harga_total' => null,
+				'tanggal' => null,
+				'id_pengeluaran' => null,
+				'nota_pengeluaran' => null,
+			];
 			header('Content-Type: application/json');
 			echo json_encode(['data' => $pengeluaran_response]);
 		}
