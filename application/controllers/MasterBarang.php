@@ -13,8 +13,9 @@ class MasterBarang extends CI_Controller {
 	public function index()
 	{
 		$this->Model_Login->keamanan();
-		$data['title'] = 'Master Barang';
+		$data['title'] = 'Barang';
         $data['script'] = base_url('assets/js/master_barang.js');
+		$data['masterbarang'] = $this->My_Model->get_data_simple('barang', null)->result();
 		// echo "<pre>";
 		// print_r($data);
 		// echo "</pre>";
@@ -100,6 +101,27 @@ class MasterBarang extends CI_Controller {
 		$this->My_Model->delete_data('barang', ['barang_id' => $id]);
 		$this->session->set_flashdata('pesan', '<div class="alert alert-danger alert-dismissible fade show" role="alert"> Data berhasil dihapus! <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button></div>');
 		redirect('masterbarang');
+	}
+
+	public function edit($id)
+	{
+		$this->_rules();
+
+		if ($this->form_validation->run() == FALSE) {
+			$this->index();
+		} else {
+			$data = array(
+				'nama' => $this->input->post('nama'),
+				'kode' => $this->input->post('kode'),
+				'satuan' => $this->input->post('satuan'),
+				'harga' => $this->input->post('harga'),
+			);
+
+			$this->My_Model->update_data('barang', ['barang_id' => $id], $data);
+			$this->session->set_flashdata('pesan', '<div class="alert alert-success alert-dismissible fade show" role="alert"> Data berhasil diubah! <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button></div>');
+			redirect('masterbarang');
+
+		}
 	}
 
 }

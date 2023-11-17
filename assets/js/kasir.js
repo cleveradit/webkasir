@@ -1,15 +1,20 @@
 $(document).ready(function(){
 	$('#jumlah').on("keyup", function() {
-		let jumlah = $('#jumlah').val();
-		if (jumlah == ''){
-			$('#tambah').attr('disabled', true);
-			console.log('disabled');
-		} else {
-			$('#tambah').removeAttr('disabled');
-			console.log('not disabled');
-		}
+		disabledButtonTambah()
 	});
 });
+
+function disabledButtonTambah(){
+	let jumlah = $('#jumlah').val();
+	if (jumlah == '' || jumlah == 0){
+		$('#tambah').attr('disabled', true);
+		console.log('disabled');
+	} else {
+		$('#tambah').removeAttr('disabled');
+		console.log('not disabled');
+	}
+	
+}
 
 // create nota
 function nota(jumlah) {
@@ -120,6 +125,7 @@ function addKeranjang() {
 				$("#jumlah").val("");
 				$("#bayar").removeAttr("disabled");
 			}
+			disabledButtonTambah()
 		},
 	});
 }
@@ -133,12 +139,12 @@ function remove(nama) {
 	akhir = total - jumlah * harga;
 	$("#total").html(akhir);
 	transaksi
-		.row($("[name=" + nama + "]").closest("tr"))
-		.remove()
-		.draw();
-	if (akhir < 1) {
-		$("#bayar").attr("disabled", "disabled");
-	}
+	.row($("[name=" + nama + "]").closest("tr"))
+	.remove()
+	.draw();
+	// if (akhir < 1) {
+	// 	$("#bayar").attr("disabled", "disabled");
+	// }
 }
 
 // MODAL BAYAR
@@ -248,9 +254,11 @@ $("#form").validate({
 
 function checkout() {
 	let data = transaksi.rows().data(),
+		barang_id = [],
 		qty = [];
 	$.each(data, (index, value) => {
 		qty.push(value[4]);
+		barang_id.push(value[5]);
 	});
     var status_bonus = qty.map(function(item) {
         return 0;
@@ -260,7 +268,7 @@ function checkout() {
 		type: "post",
 		dataType: "json",
 		data: {
-			barang: JSON.stringify(barang),
+			barang: JSON.stringify(barang_id),
 			tanggal: $("#tanggal").val(),
 			qty: JSON.stringify(qty),
 			total_harga: $("#total").html(),
@@ -369,7 +377,15 @@ function checkout() {
 			}
 		},
 		error: (err) => {
-			console.log(err);
+			console.log(err.responseText);
+			if (err.responseText) {
+				try {
+					// Mendapatkan pesan kesalahan langsung dari responseText
+					errorMessage = JSON.parse(err.responseText).msg.err || errorMessage;
+				} catch (jsonError) {
+					console.error('Gagal mengurai respons JSON dari server:', jsonError);
+				}
+			}
 		},
 	});
 }

@@ -217,15 +217,19 @@ class Kasir extends CI_Controller
 
 	public function checkout()
 	{
-		$barang = json_decode($this->input->post('barang'));
+		// $barang = json_decode($this->input->post('barang'));
 		$tanggal = new DateTime($this->input->post('tanggal'));
-		$kode = array();
-		foreach ($barang as $barang) {
-			array_push($kode, $barang->id);
-		}
+		// $kode = array();
+		// foreach ($barang as $barang) {
+		// 	array_push($kode, $barang);
+		// }
+		// echo "<pre>";
+		// print_r($this->input->post('bonus_id'));
+		// echo "</pre>";
+		// die();
 		$data = array(
 			'tanggal' => $tanggal->format('Y-m-d H:i:s'),
-			'barang_id' => implode(',', $kode),
+			'barang_id' => implode(',', json_decode($this->input->post('barang'))),
 			'jumlah' => implode(',', json_decode($this->input->post('qty'))),
 			'total_harga' => $this->input->post('total_harga'),
 			'total_bayar' => $this->input->post('total_bayar'),
@@ -239,8 +243,10 @@ class Kasir extends CI_Controller
 			$data['status'] = $this->input->post('status');
 			$data['bonus_id'] = $this->input->post('bonus_id');
 
-			$bonus = $this->My_Model->get_data_simple('bonus', ['bonus_id' => $data['bonus_id']])->row();
-			$data['bonus_text'] = 'Rp.'.$bonus->uang;
+			$bonus = $this->My_Model->get_data_simple('bonus', ['bonus_id' => $this->input->post('bonus_id')])->row();
+			if($bonus){
+				$data['bonus_text'] = 'Rp.'.$bonus->uang;
+			}
 			echo json_encode($data);
 		}
 		$data = $this->input->post('form');
