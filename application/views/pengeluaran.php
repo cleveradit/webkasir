@@ -1,3 +1,4 @@
+<?= $this->session->flashdata('pesan'); ?>
 <div class="modal fade" id="tambah" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
 	<div class="modal-dialog">
 		<div class="modal-content">
@@ -28,7 +29,7 @@
 						<div class="form-group">
 							<label>Harga satuan</label>
 							<input type="number" name="harga_satuan[]" class="form-control">
-							<?= form_error('harga_satuan"', '<div class="text-small text-danger">', '</div>'); ?>
+							<?= form_error('harga_satuan', '<div class="text-small text-danger">', '</div>'); ?>
 						</div>
 					</div>
 					<div id=form-dinamis>

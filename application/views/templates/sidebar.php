@@ -70,6 +70,14 @@
                   <p>Rangking Konsumen</p>
                 </a>
               </li>
+
+              <li class="nav-item">
+                <a href="<?= base_url('masterbarang') ?>" class="nav-link">
+                  <i class="nav-icon fas fa-tachometer-alt"></i>
+                  <p>Master Barang</p>
+                </a>
+              </li>
+
           <li class="nav-item">
                 <a href="<?= base_url('masterbonus') ?>" class="nav-link">
                   <i class="nav-icon fas fa-users"></i>
