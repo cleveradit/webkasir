@@ -19,17 +19,17 @@
 						<div class="form-group">
 							<label>Nama Barang</label>
 							<input type="text" name="nama_barang[]" class="form-control">
-							<?= form_error('nama_barang', '<div class="text-small text-danger">', '</div>'); ?>
+							<?= form_error('nama_barang[0]', '<div class="text-small text-danger">', '</div>'); ?>
 						</div>
 						<div class="form-group">
 							<label>Kuantitas</label>
 							<input type="number" name="kuantitas[]" class="form-control">
-							<?= form_error('kuantitas', '<div class="text-small text-danger">', '</div>'); ?>
+							<?= form_error('kuantitas[0]', '<div class="text-small text-danger">', '</div>'); ?>
 						</div>
 						<div class="form-group">
 							<label>Harga satuan</label>
 							<input type="number" name="harga_satuan[]" class="form-control">
-							<?= form_error('harga_satuan', '<div class="text-small text-danger">', '</div>'); ?>
+							<?= form_error('harga_satuan[0]', '<div class="text-small text-danger">', '</div>'); ?>
 						</div>
 					</div>
 					<div id=form-dinamis>
@@ -88,7 +88,7 @@
 					<form action="<?= base_url('pengeluaran/upload/' . $p->id_pengeluaran) ?>" method="POST" enctype="multipart/form-data">
 						<div class="form-group">
 							<label>Nota</label>
-							<input type="file" name="nota_pengeluaran" class="form-control">
+							<input type="file" name="nota_pengeluaran" class="custom-file">
 							<?= form_error('nota_pengeluaran', '<div class="text-small text-danger">', '</div>'); ?>
 						</div>
 						<div class="modal-footer">

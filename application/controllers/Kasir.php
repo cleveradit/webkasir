@@ -190,23 +190,27 @@ class Kasir extends CI_Controller
 			}
 		}
 		if (!isset($response)) {
-			$bonus_terdekat = $this->My_Model->get_data_order('bonus', ['jumlah >' => $total], 'jumlah ASC')->row();
-			$get_bonus_barang_terdekat = explode(',', $bonus_terdekat->barang);
-			$nama_satuan_bonus_terdekat = array();
-			foreach ($get_bonus_barang_terdekat as $gbbt) {
-				$barang_bonus = $this->My_Model->get_data_simple('barang', ['barang_id' => $gbbt])->row();
-				array_push($nama_satuan_bonus_terdekat, $barang_bonus->nama . '(' . $barang_bonus->satuan . ')');
+			if($this->My_Model->get_data_simple('bonus', null)->num_rows() <> null){
+				$bonus_terdekat = $this->My_Model->get_data_order('bonus', ['jumlah >' => $total], 'jumlah ASC')->row();
+				$get_bonus_barang_terdekat = explode(',', $bonus_terdekat->barang);
+				$nama_satuan_bonus_terdekat = array();
+				foreach ($get_bonus_barang_terdekat as $gbbt) {
+					$barang_bonus = $this->My_Model->get_data_simple('barang', ['barang_id' => $gbbt])->row();
+					array_push($nama_satuan_bonus_terdekat, $barang_bonus->nama . '(' . $barang_bonus->satuan . ')');
+				}
+				$barang_response_terdekat = implode(',', $nama_satuan_bonus_terdekat);
+				$response = [
+					'status' => 'Belum berhak mendapat reward',
+					'bonus_id' => $bonus_terdekat->bonus_id,
+					'syarat_pembelian' => $bonus_terdekat->jumlah,
+					'total_pembelian' => $total,
+					'barang' => $barang_response_terdekat,
+					'hari' => $bonus_terdekat->hari,
+					'uang' => $bonus_terdekat->uang
+				];
+			}else{
+				$response = null;
 			}
-			$barang_response_terdekat = implode(',', $nama_satuan_bonus_terdekat);
-			$response = [
-				'status' => 'Belum berhak mendapat reward',
-				'bonus_id' => $bonus_terdekat->bonus_id,
-				'syarat_pembelian' => $bonus_terdekat->jumlah,
-				'total_pembelian' => $total,
-				'barang' => $barang_response_terdekat,
-				'hari' => $bonus_terdekat->hari,
-				'uang' => $bonus_terdekat->uang
-			];
 		}
 		if ($param) {
 			return $response;
@@ -271,15 +275,27 @@ class Kasir extends CI_Controller
 			$value->total = $qty[$key];
 			$value->harga = $value->harga * $qty[$key];
 		}
-		$data = array(
-			'bonus' => $bonus['total_pembelian'] . '/' . $bonus['syarat_pembelian'] . ' Rp. ' . $bonus['uang'],
-			'nota' => $transaksi->nota,
-			'tanggal' => $transaksi->tanggal,
-			'barang' => $dataBarang,
-			'total' => $transaksi->total_harga,
-			'bayar' => $transaksi->total_bayar,
-			'kembalian' => $transaksi->total_bayar - $transaksi->total_harga,
-		);
+		if ($bonus!=null){
+			$data = array(
+				'bonus' => $bonus['total_pembelian'] . '/' . $bonus['syarat_pembelian'] . ' Rp. ' . $bonus['uang'],
+				'nota' => $transaksi->nota,
+				'tanggal' => $transaksi->tanggal,
+				'barang' => $dataBarang,
+				'total' => $transaksi->total_harga,
+				'bayar' => $transaksi->total_bayar,
+				'kembalian' => $transaksi->total_bayar - $transaksi->total_harga,
+			);
+		}else{
+			$data = array(
+				'bonus' => 'Belum ada',
+				'nota' => $transaksi->nota,
+				'tanggal' => $transaksi->tanggal,
+				'barang' => $dataBarang,
+				'total' => $transaksi->total_harga,
+				'bayar' => $transaksi->total_bayar,
+				'kembalian' => $transaksi->total_bayar - $transaksi->total_harga,
+			);
+		}
 		$this->load->view('cetak', $data);
 	}
 

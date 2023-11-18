@@ -9,8 +9,8 @@
                   <tr>
                     <th>No</th>
                     <th>Nama</th>
-                    <th>Total Transaksi</th>
-                    <th>Transaksi Total</th>
+                    <th>Transaksi Rupiah</th>
+                    <th>Transaksi Barang</th>
                   </tr>
                   </thead>
                 </table>

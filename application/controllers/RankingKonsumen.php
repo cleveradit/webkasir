@@ -27,22 +27,31 @@ class RankingKonsumen extends CI_Controller
 		if ($this->My_Model->get_data_simple('transaksi', ['tanggal like' => $date.'%'])->num_rows() <> null) {
 			$konsumen = $this->My_Model->get_query("SELECT konsumen_id, SUM(total_harga) as transaksi_total FROM transaksi WHERE tanggal LIKE '" . $date . "%' GROUP BY konsumen_id ORDER BY SUM(total_harga) desc LIMIT 5")->result();
 			$no = 1;
-		// 	echo "<pre>";
-		// print_r($konsumen);
-		// echo "</pre>";
-		// die();
 			foreach ($konsumen as $konsumen){
-				$transaksi_total = $this->My_Model->get_query("SELECT konsumen_id, SUM(total_harga) as transaksi_total, COUNT(*) as total_transaksi FROM transaksi WHERE (konsumen_id = ".$konsumen->konsumen_id." AND tanggal LIKE '".$date."%') GROUP BY konsumen_id")->row();
+				$transaksi = $this->My_Model->get_data_simple('transaksi', ['tanggal like' => $date.'%', 'konsumen_id' => $konsumen->konsumen_id])->result_array();
+				$transaksi_jumlah = 0;
+				foreach ($transaksi as $t){
+					$qty = explode(',', $t['jumlah']);
+					foreach ($qty as $q){
+						$transaksi_jumlah += $q;
+					}
+				}
+				$transaksi_total_harga = $this->My_Model->get_query("SELECT konsumen_id, SUM(total_harga) as transaksi_total_harga FROM transaksi WHERE (konsumen_id = ".$konsumen->konsumen_id." AND tanggal LIKE '".$date."%') GROUP BY konsumen_id")->row();
 				$nama_konsumen = $this->My_Model->get_query("SELECT nama_konsumen FROM konsumen WHERE id_konsumen =".$konsumen->konsumen_id."")->row();
-				if ($transaksi_total != null) {
+				// die();
+				if ($transaksi_total_harga != null) {
 					$data['transaksi'][] = array(
 						'no'			=> $no++,
 						'nama_konsumen' => $nama_konsumen->nama_konsumen,
-						'transaksi_total' => $transaksi_total->transaksi_total,
-						'total_transaksi' => $transaksi_total->total_transaksi,
+						'transaksi_total_harga' => $transaksi_total_harga->transaksi_total_harga,
+						'transaksi_jumlah' => $transaksi_jumlah,
 					);
 				}
 			}
+			// echo "<pre>";
+			// print_r($data);
+			// echo "</pre>";
+			// die();
 		}else{
 			$data['transaksi'][0] = array(
 				'no'			  => null,
@@ -50,10 +59,6 @@ class RankingKonsumen extends CI_Controller
 				'transaksi_total' => null,
 				'total_transaksi' => null,
 			);
-			// echo "<pre>";
-			// print_r($this->My_Model->get_data_simple('transaksi', ['tanggal like' => $date.'%'])->num_rows());
-			// echo "</pre>";
-			// die();
 		}
 		header('Content-Type: application/json');
 		echo json_encode(['data' => $data['transaksi']]);

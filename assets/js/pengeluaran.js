@@ -3,12 +3,30 @@ $(document).ready(function() {
     // setInterval(function() {
     //     load_table(); // Reload the table
     // }, 600000);
+    let form_error = $(".text-small.text-danger").html()
+    if(form_error!='' && form_error!=undefined){
+        $("#tambah").modal("show");
+    }
 });
 
 function copyForm(){
-		$("#form-asal")
-		.clone()
-		.appendTo($("#form-dinamis"))
+    var clonedForm = $("#form-asal").clone();
+        
+    // Increment index for each form field in the cloned section
+    var index = $("#form-dinamis > div").length; // Get the current number of cloned sections
+    clonedForm.find('[name^="nama_barang"]').attr('name', 'nama_barang[' + index + ']');
+    clonedForm.find('[name^="kuantitas"]').attr('name', 'kuantitas[' + index + ']');
+    clonedForm.find('[name^="harga_satuan"]').attr('name', 'harga_satuan[' + index + ']');
+
+    // Update form error messages with the correct indices
+    clonedForm.find('.text-danger').each(function() {
+        var originalMessage = $(this).html();
+        var newIndex = index;
+        var newMessage = originalMessage.replace(/\[0\]/g, '[' + newIndex + ']');
+        $(this).html(newMessage);
+    });
+
+    clonedForm.appendTo($("#form-dinamis"));
 }
 
 function load_table() {

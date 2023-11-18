@@ -21,7 +21,7 @@ class Pengeluaran extends CI_Controller {
 		// print_r($data['pengeluaran']);
 		// echo "</pre>";
 		// die();
-
+		
 		$this->load->view('templates/header', $data);
 		$this->load->view('templates/sidebar', $data);
 		$this->load->view('pengeluaran', $data);
@@ -76,16 +76,11 @@ class Pengeluaran extends CI_Controller {
 
 	public function tambah_aksi()
 	{
-		// $data['script'] = base_url('assets/js/pengeluaran.js');
-		// echo "<pre>";
-		// 	print_r($_POST);
-		// 	echo "</pre>";
-		// 	die();
 
-		// $this->_rules();
-		// if ($this->form_validation->run() == FALSE) {
-		// 	$this->index();
-		// } else {
+		$this->_rules();
+		if ($this->form_validation->run() == FALSE) {
+			$this->index();
+		} else {
 			$namabarang = implode(", ",$this->input->post('nama_barang'));
 			$kuantitas = implode(", ",$this->input->post('kuantitas'));
 			$hargasatuan = implode(", ",$this->input->post('harga_satuan'));
@@ -95,13 +90,6 @@ class Pengeluaran extends CI_Controller {
 			$harga_total = 0;
 			foreach($barang as $key => $val_barang){
 			$harga_total += $qty[$key] * $harga_satuan[$key];
-			// echo "<pre>";
-			// // print_r($kuantitas);
-			// print_r($kuantitas);
-			// // echo htmlspecialchars("<br>_______");
-			// // print_r($this->input->post('kuantitas'));
-			// echo "</pre>";
-			// die();
 			}
 			$data = array(
 				'nama_member' => $this->input->post('nama_member'),
@@ -115,7 +103,7 @@ class Pengeluaran extends CI_Controller {
 			$this->My_Model->save_data('pengeluaran', $data);
 			$this->session->set_flashdata('pesan', '<div class="alert alert-success alert-dismissible fade show" role="alert"> Data berhasil ditambahkan! <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button></div>');
 			redirect('pengeluaran');
-		// }
+		}
 	}
 
 	public function edit($id_pengeluaran)
@@ -184,20 +172,38 @@ class Pengeluaran extends CI_Controller {
 	}
 
 
-public function _rules()
+	public function _rules()
 	{
 		$this->form_validation->set_rules('nama_member', 'Nama', 'required', array(
-			'required'=> '%s Harus diisi!'
+			'required' => '%s Harus diisi!'
 		));
-		$this->form_validation->set_rules('nama_barang', 'Nama Barang', 'required', array(
-			'required'=> '%s Harus diisi!'
-		));
-		$this->form_validation->set_rules('kuantitas', 'Kuantitas', 'required', array(
-			'required'=> '%s Harus diisi!'
-		));
-		$this->form_validation->set_rules('harga_satuan', 'Harga Satuan', 'required', array(
-			'required'=> '%s Harus diisi!'
-		));
+
+		// Loop through the arrays and set rules for each element
+		$nama_barang = $this->input->post('nama_barang');
+
+		foreach ($nama_barang as $key => $val_barang) {
+			$this->form_validation->set_rules(
+				'nama_barang[' . $key . ']',
+				'Nama Barang',
+				'required',
+				array('required' => '%s Harus diisi!')
+			);
+
+			$this->form_validation->set_rules(
+				'kuantitas[' . $key . ']',
+				'Kuantitas',
+				'required',
+				array('required' => '%s Harus diisi!')
+			);
+
+			$this->form_validation->set_rules(
+				'harga_satuan[' . $key . ']',
+				'Harga Satuan',
+				'required',
+				array('required' => '%s Harus diisi!')
+			);
+		}
 	}
+
 
 }
