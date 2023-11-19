@@ -361,8 +361,14 @@ class RiwayatPenjualan extends CI_Controller {
 			$current_date = date("Y-m-d", strtotime($current_date . " +1 day"));
 			$keys += 1;
 		}
+		$uploadDir = './assets/main excel/';
+		if (!is_dir($uploadDir)) {
+			mkdir($uploadDir, 0777, true);
+			chmod($uploadDir, 0777);
+		}
 		// Save the modified Excel file
-		$outputFileName = 'D:/Download/'.date("Y-m-d").'.xlsx';
+		$outputFileName = __DIR__ .'/../../assets/main excel/'.date('Y-m-d').'.xlsx';
+		// $outputFileName = 'C:/Download/'.date("Y-m-d").'.xlsx';
 		$writer = IOFactory::createWriter($spreadsheet, 'Xlsx');
 		$writer->save($outputFileName);
 	

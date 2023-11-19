@@ -14,34 +14,34 @@ function load_table() {
         "destroy": true,
         "processing": true,
         // "serverSide": true,
-        "dom": 'Bfrtip',
-        "buttons": [
-            {
-                extend: 'copy',
-                text: 'Copy',
-                className: 'custom-dataTables-button btn btn-sm',
-            },
-            {
-                extend: 'excel',
-                text: 'Excel',
-                className: 'custom-dataTables-button btn btn-sm',
-            },
-            {
-                extend: 'csv',
-                text: 'CSV',
-                className: 'custom-dataTables-button btn btn-sm',
-            },
-            {
-                extend: 'print',
-                text: 'Print',
-                className: 'custom-dataTables-button btn btn-sm',
-            },
-            {
-                extend: 'pdf',
-                text: 'PDF',
-                className: 'custom-dataTables-button btn btn-sm',
-            }
-        ],
+        "dom": 'frtip',
+        // "buttons": [
+        //     {
+        //         extend: 'copy',
+        //         text: 'Copy',
+        //         className: 'custom-dataTables-button btn btn-sm',
+        //     },
+        //     {
+        //         extend: 'excel',
+        //         text: 'Excel',
+        //         className: 'custom-dataTables-button btn btn-sm',
+        //     },
+        //     {
+        //         extend: 'csv',
+        //         text: 'CSV',
+        //         className: 'custom-dataTables-button btn btn-sm',
+        //     },
+        //     {
+        //         extend: 'print',
+        //         text: 'Print',
+        //         className: 'custom-dataTables-button btn btn-sm',
+        //     },
+        //     {
+        //         extend: 'pdf',
+        //         text: 'PDF',
+        //         className: 'custom-dataTables-button btn btn-sm',
+        //     }
+        // ],
         "ajax": {
             url: base_url + 'MasterBonus/load_data',
         },
