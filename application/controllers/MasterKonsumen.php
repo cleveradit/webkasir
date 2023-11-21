@@ -101,7 +101,7 @@ class MasterKonsumen extends CI_Controller {
 
 	public function tambah()
 	{
-		$data['title'] = 'Konsumen';
+		$data['title'] = 'Tambah Konsumen';
 
 		$this->load->view('templates/header', $data);
 		$this->load->view('templates/sidebar', $data);
@@ -126,12 +126,27 @@ class MasterKonsumen extends CI_Controller {
 		}
 	}
 
-	public function edit($id_konsumen)
+	public function edit($id)
+	{
+		$data['title'] = 'Edit Konsumen';
+		$data['masterkonsumen'] = $this->My_Model->get_data_simple('konsumen', ['id_konsumen' => $id])->row();
+		// echo "<pre>";
+		// print_r($data);
+		// echo "</pre>";
+		// die();
+
+		$this->load->view('templates/header', $data);
+		$this->load->view('templates/sidebar', $data);
+		$this->load->view('editkonsumen');
+		$this->load->view('templates/footer');	
+	}
+
+	public function edit_aksi($id_konsumen)
 	{
 		$this->_rules();
 
 		if ($this->form_validation->run() == FALSE) {
-			$this->index();
+			$this->edit($id_konsumen);
 		} else {
 			$data = array(
 				'id_konsumen' => $id_konsumen,

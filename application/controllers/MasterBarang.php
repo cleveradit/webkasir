@@ -15,7 +15,6 @@ class MasterBarang extends CI_Controller {
 		$this->Model_Login->keamanan();
 		$data['title'] = 'Barang';
         $data['script'] = base_url('assets/js/master_barang.js');
-		$data['masterbarang'] = $this->My_Model->get_data_simple('barang', null)->result();
 		// echo "<pre>";
 		// print_r($data);
 		// echo "</pre>";
@@ -61,11 +60,22 @@ class MasterBarang extends CI_Controller {
 		}
 	}
 
+	public function tambah()
+	{
+		$data['title'] = 'Tambah Barang';
+
+		$this->load->view('templates/header', $data);
+		$this->load->view('templates/sidebar', $data);
+		$this->load->view('tambahbarang');
+		$this->load->view('templates/footer');	
+	}
+
+	
 	public function tambah_aksi()
 	{
 		$this->_rules();
 		if ($this->form_validation->run() == FALSE) { 
-			$this->index();
+			$this->tambah();
 		} else {
 			$data = array(
 				'nama' => $this->input->post('nama'),
@@ -73,13 +83,13 @@ class MasterBarang extends CI_Controller {
 				'satuan' => $this->input->post('satuan'),
 				'harga' => $this->input->post('harga'),
 			);
-
+			
 			$this->My_Model->save_data('barang', $data);
 			$this->session->set_flashdata('pesan', '<div class="alert alert-success alert-dismissible fade show" role="alert"> Data berhasil ditambahkan! <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button></div>');
 			redirect('masterbarang');
 		}
 	}
-
+	
     public function _rules()
 	{
 		$this->form_validation->set_rules('nama', 'Nama', 'required', array(
@@ -102,13 +112,25 @@ class MasterBarang extends CI_Controller {
 		$this->session->set_flashdata('pesan', '<div class="alert alert-danger alert-dismissible fade show" role="alert"> Data berhasil dihapus! <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button></div>');
 		redirect('masterbarang');
 	}
-
+	
 	public function edit($id)
+	{
+		$data['title'] = 'Edit Barang';
+		
+		$data['masterbarang'] = $this->My_Model->get_data_simple('barang', ['barang_id' => $id])->row();
+
+		$this->load->view('templates/header', $data);
+		$this->load->view('templates/sidebar', $data);
+		$this->load->view('editbarang');
+		$this->load->view('templates/footer');	
+	}
+
+	public function edit_aksi($id)
 	{
 		$this->_rules();
 
 		if ($this->form_validation->run() == FALSE) {
-			$this->index();
+			$this->edit($id);
 		} else {
 			$data = array(
 				'nama' => $this->input->post('nama'),

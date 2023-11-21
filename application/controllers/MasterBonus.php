@@ -70,7 +70,7 @@ class MasterBonus extends CI_Controller {
 
 	public function tambah()
 	{
-		$data['title'] = 'Bonus';
+		$data['title'] = 'Tambah Bonus';
 		$data['script'] = base_url('assets/js/master_bonus.js');
 		$data['barang'] = $this->My_Model->get_data_simple('barang')->result_array();
 
@@ -79,39 +79,66 @@ class MasterBonus extends CI_Controller {
 		$this->load->view('tambahbonus');
 		$this->load->view('templates/footer');	
 	}
-
+	
 	public function tambah_aksi()
 	{
-		$barang = implode(',',$this->input->post('barang'));
-
-		$data = array(
-			'barang' => $barang,
-			'jumlah' => $this->input->post('jumlah'),
-			'hari' => $this->input->post('hari'),
-			'uang' => $this->input->post('uang'),
-			'status' => $this->input->post('status'),
-		);
-
-		$this->My_Model->save_data('bonus', $data);
-		$this->session->set_flashdata('pesan', '<div class="alert alert-success alert-dismissible fade show" role="alert"> Data berhasil ditambahkan! <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button></div>');
-		redirect('masterbonus');
+		$this->_rules();
+		if ($this->form_validation->run() == FALSE) { 
+			$this->tambah();
+		} else {
+			$barang = implode(',',$this->input->post('barang'));
+			
+			$data = array(
+				'barang' => $barang,
+				'jumlah' => $this->input->post('jumlah'),
+				'hari' => $this->input->post('hari'),
+				'uang' => $this->input->post('uang'),
+				'status' => $this->input->post('status'),
+			);
+			
+			$this->My_Model->save_data('bonus', $data);
+			$this->session->set_flashdata('pesan', '<div class="alert alert-success alert-dismissible fade show" role="alert"> Data berhasil ditambahkan! <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button></div>');
+			redirect('masterbonus');
+		}
 	}
 
-	public function edit($bonus_id)
+	public function edit($id)
 	{
-		$barang = implode(',',$this->input->post('barang'));
+		$data['title'] = 'Edit Bonus';
+		$data['script'] = base_url('assets/js/master_bonus.js');
+		$data['masterbonus'] = $this->My_Model->get_data_simple('bonus', ['bonus_id' => $id])->row();
+		$data['barang'] = $this->My_Model->get_data_simple('barang')->result_array();
+		// echo "<pre>";
+		// print_r($data);
+		// echo "</pre>";
+		// die();
 
-		$data = array(
-			'barang' => $barang,
-			'jumlah' => $this->input->post('jumlah'),
-			'hari' => $this->input->post('hari'),
-			'uang' => $this->input->post('uang'),
-			'status' => $this->input->post('status'),
-		);
+		$this->load->view('templates/header', $data);
+		$this->load->view('templates/sidebar', $data);
+		$this->load->view('editbonus');
+		$this->load->view('templates/footer');	
+	}
 
-		$this->My_Model->update_data('bonus', ['bonus_id' => $bonus_id], $data);
-		$this->session->set_flashdata('pesan', '<div class="alert alert-success alert-dismissible fade show" role="alert"> Data berhasil diubah! <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button></div>');
-		redirect('masterbonus');
+	public function edit_aksi($bonus_id)
+	{
+		$this->_rules();
+		if ($this->form_validation->run() == FALSE) { 
+			$this->edit($bonus_id);
+		} else {
+			$barang = implode(',',$this->input->post('barang'));
+
+			$data = array(
+				'barang' => $barang,
+				'jumlah' => $this->input->post('jumlah'),
+				'hari' => $this->input->post('hari'),
+				'uang' => $this->input->post('uang'),
+				'status' => $this->input->post('status'),
+			);
+
+			$this->My_Model->update_data('bonus', ['bonus_id' => $bonus_id], $data);
+			$this->session->set_flashdata('pesan', '<div class="alert alert-success alert-dismissible fade show" role="alert"> Data berhasil diubah! <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button></div>');
+			redirect('masterbonus');
+		}
 	}
 
 	public function delete($id)
@@ -119,5 +146,24 @@ class MasterBonus extends CI_Controller {
 		$this->My_Model->delete_data('bonus', ['bonus_id' => $id]);
 		$this->session->set_flashdata('pesan', '<div class="alert alert-danger alert-dismissible fade show" role="alert"> Data berhasil dihapus! <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button></div>');
 		redirect('masterbonus');
+	}
+
+	public function _rules()
+	{
+		$this->form_validation->set_rules('barang[0]', 'Barang', 'required', array(
+			'required'=> '%s Harus diisi!'
+		));
+		$this->form_validation->set_rules('jumlah', 'Jumlah', 'required', array(
+			'required'=> '%s Harus diisi!'
+		));
+		$this->form_validation->set_rules('hari', 'Hari', 'required', array(
+			'required'=> '%s Harus diisi!'
+		));
+		$this->form_validation->set_rules('uang', 'Uang', 'required', array(
+			'required'=> '%s Harus diisi!'
+		));
+		$this->form_validation->set_rules('status', 'Status', 'required', array(
+			'required'=> '%s Harus diisi!'
+		));
 	}
 }

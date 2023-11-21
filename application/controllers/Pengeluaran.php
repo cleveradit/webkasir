@@ -74,13 +74,24 @@ class Pengeluaran extends CI_Controller {
 		}
 	}
 
+	public function tambah()
+	{
+		$data['title'] = 'Tambah Pengeluaran';
+		$data['script'] = base_url('assets/js/pengeluaran.js');
+
+		$this->load->view('templates/header', $data);
+		$this->load->view('templates/sidebar', $data);
+		$this->load->view('tambahpengeluaran');
+		$this->load->view('templates/footer');	
+	}
+
 	public function tambah_aksi()
 	{
 
-		$this->_rules();
-		if ($this->form_validation->run() == FALSE) {
-			$this->index();
-		} else {
+		// $this->_rules();
+		// if ($this->form_validation->run() == FALSE) {
+		// 	$this->tambah();
+		// } else {
 			$namabarang = implode(", ",$this->input->post('nama_barang'));
 			$kuantitas = implode(", ",$this->input->post('kuantitas'));
 			$hargasatuan = implode(", ",$this->input->post('harga_satuan'));
@@ -89,7 +100,7 @@ class Pengeluaran extends CI_Controller {
 			$harga_satuan = $this->input->post('harga_satuan');
 			$harga_total = 0;
 			foreach($barang as $key => $val_barang){
-			$harga_total += $qty[$key] * $harga_satuan[$key];
+				$harga_total += $qty[$key] * $harga_satuan[$key];
 			}
 			$data = array(
 				'nama_member' => $this->input->post('nama_member'),
@@ -103,16 +114,16 @@ class Pengeluaran extends CI_Controller {
 			$this->My_Model->save_data('pengeluaran', $data);
 			$this->session->set_flashdata('pesan', '<div class="alert alert-success alert-dismissible fade show" role="alert"> Data berhasil ditambahkan! <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button></div>');
 			redirect('pengeluaran');
-		}
+		// }
 	}
 
 	public function edit($id_pengeluaran)
 	{
-		$this->_rules();
+		// $this->_rules();
 
-		if ($this->form_validation->run() == FALSE) {
-			$this->index();
-		} else {
+		// if ($this->form_validation->run() == FALSE) {
+		// 	$this->index();
+		// } else {
 			$data = array(
 				'id_pengeluaran' => $id_pengeluaran,
 				'nama' => $this->input->post('nama'),
@@ -125,7 +136,7 @@ class Pengeluaran extends CI_Controller {
 			$this->session->set_flashdata('pesan', '<div class="alert alert-success alert-dismissible fade show" role="alert"> Data berhasil diubah! <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button></div>');
 			redirect('pengeluaran');
 
-		}
+		// }
 	}
 
 	public function delete($id)
@@ -172,38 +183,38 @@ class Pengeluaran extends CI_Controller {
 	}
 
 
-	public function _rules()
-	{
-		$this->form_validation->set_rules('nama_member', 'Nama', 'required', array(
-			'required' => '%s Harus diisi!'
-		));
+	// public function _rules()
+	// {
+	// 	$this->form_validation->set_rules('nama_member', 'Nama', 'required', array(
+	// 		'required' => '%s Harus diisi!'
+	// 	));
 
-		// Loop through the arrays and set rules for each element
-		$nama_barang = $this->input->post('nama_barang');
+	// 	// Loop through the arrays and set rules for each element
+	// 	$nama_barang = $this->input->post('nama_barang');
 
-		foreach ($nama_barang as $key => $val_barang) {
-			$this->form_validation->set_rules(
-				'nama_barang[' . $key . ']',
-				'Nama Barang',
-				'required',
-				array('required' => '%s Harus diisi!')
-			);
+	// 	foreach ($nama_barang as $key => $val_barang) {
+	// 		$this->form_validation->set_rules(
+	// 			'nama_barang[' . $key . ']',
+	// 			'Nama Barang',
+	// 			'required',
+	// 			array('required' => '%s Harus diisi!')
+	// 		);
 
-			$this->form_validation->set_rules(
-				'kuantitas[' . $key . ']',
-				'Kuantitas',
-				'required',
-				array('required' => '%s Harus diisi!')
-			);
+	// 		$this->form_validation->set_rules(
+	// 			'kuantitas[' . $key . ']',
+	// 			'Kuantitas',
+	// 			'required',
+	// 			array('required' => '%s Harus diisi!')
+	// 		);
 
-			$this->form_validation->set_rules(
-				'harga_satuan[' . $key . ']',
-				'Harga Satuan',
-				'required',
-				array('required' => '%s Harus diisi!')
-			);
-		}
-	}
+	// 		$this->form_validation->set_rules(
+	// 			'harga_satuan[' . $key . ']',
+	// 			'Harga Satuan',
+	// 			'required',
+	// 			array('required' => '%s Harus diisi!')
+	// 		);
+	// 	}
+	// }
 
 
 }
