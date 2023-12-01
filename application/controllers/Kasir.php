@@ -168,6 +168,47 @@ class Kasir extends CI_Controller
 							];
 						}
 					}
+					
+					if ($bonus_jumlah == 0){
+						// Cek apakah total memenuhi syarat pembelian bonus
+						if ($total >= $b['jumlah']) {
+							$bonus_barang_array = explode(',', $b['barang']);
+							$barang_text = array();
+							foreach ($bonus_barang_array as $bba) {
+								$barang_row = $this->My_Model->get_data_simple('barang', ['barang_id' => $bba])->row();
+								array_push($barang_text, $barang_row->nama . '(' . $barang_row->satuan . ')');
+							}
+							$barang_response = implode(',', $barang_text);
+							$response = [
+								'status' => 'Berhak mendapat reward',
+								'bonus_id' => $b['bonus_id'],
+								'syarat_pembelian' => $b['jumlah'],
+								'total_pembelian' => $total,
+								'barang' => $barang_response,
+								'hari' => $b['hari'],
+								'uang' => $b['uang']
+							];
+						}
+					}
+					// else{
+						// $bonus_terdekat = $this->My_Model->get_data_order('bonus', ['jumlah >=' => $total], 'jumlah ASC')->row();
+						// $get_bonus_barang_terdekat = explode(',', $bonus_terdekat->barang);
+						// $nama_satuan_bonus_terdekat = array();
+						// foreach ($get_bonus_barang_terdekat as $gbbt) {
+						// 	$barang_bonus = $this->My_Model->get_data_simple('barang', ['barang_id' => $gbbt])->row();
+						// 	array_push($nama_satuan_bonus_terdekat, $barang_bonus->nama . '(' . $barang_bonus->satuan . ')');
+						// }
+						// $barang_response_terdekat = implode(',', $nama_satuan_bonus_terdekat);
+						// $response = [
+						// 	'status' => 'Belum berhak mendapat reward',
+						// 	'bonus_id' => $bonus_terdekat->bonus_id,
+						// 	'syarat_pembelian' => $bonus_terdekat->jumlah,
+						// 	'total_pembelian' => $total,
+						// 	'barang' => $barang_response_terdekat,
+						// 	'hari' => $bonus_terdekat->hari,
+						// 	'uang' => "tes"
+						// ];
+					// }
 				}
 			}
 			if ($total_keranjang >= $b['jumlah']) {

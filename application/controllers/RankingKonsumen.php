@@ -39,25 +39,25 @@ class RankingKonsumen extends CI_Controller
 				$transaksi_total_harga = $this->My_Model->get_query("SELECT konsumen_id, SUM(total_harga) as transaksi_total_harga FROM transaksi WHERE (konsumen_id = ".$konsumen->konsumen_id." AND tanggal LIKE '".$date."%') GROUP BY konsumen_id")->row();
 				$nama_konsumen = $this->My_Model->get_query("SELECT nama_konsumen FROM konsumen WHERE id_konsumen =".$konsumen->konsumen_id."")->row();
 				// die();
-				if ($transaksi_total_harga != null) {
+				
 					$data['transaksi'][] = array(
 						'no'			=> $no++,
 						'nama_konsumen' => $nama_konsumen->nama_konsumen,
 						'transaksi_total_harga' => $transaksi_total_harga->transaksi_total_harga,
 						'transaksi_jumlah' => $transaksi_jumlah,
 					);
-				}
+				
 			}
 			// echo "<pre>";
 			// print_r($data);
 			// echo "</pre>";
 			// die();
 		}else{
-			$data['transaksi'][0] = array(
+			$data['transaksi'][] = array(
 				'no'			  => null,
 				'nama_konsumen'   => null,
-				'transaksi_total' => null,
-				'total_transaksi' => null,
+				'transaksi_total_harga' => null,
+				'transaksi_jumlah' => null,
 			);
 		}
 		header('Content-Type: application/json');
